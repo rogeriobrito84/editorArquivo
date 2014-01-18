@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import main.*?>
+
+<ControleMain id="panePrinciipal" fx:id="panePrincipal"
+	maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+	minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="main.ControleMain" >
+	<children>
+		<TextArea id="texto" fx:id="texto" editable="false" layoutY="24.0"
+			prefHeight="376.0" prefWidth="600.0" />
+		<ProgressIndicator fx:id="progresso" layoutX="155.0" layoutY="79.0" visible="false" prefHeight="200.0" prefWidth="300.0" progress="0.0" />
+		<ToolBar fx:id="menu" prefHeight="24.0" prefWidth="600.0"
+			xmlns:fx="http://javafx.com/fxml">
+			<items>
+				<Button fx:id="btnNovo" mnemonicParsing="false" prefHeight="10.0"
+					text="Novo" />
+				<Button fx:id="btnSalvar" mnemonicParsing="false" prefHeight="10.0"
+					text="Salvar" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+				<Button fx:id="btnAtualizar" mnemonicParsing="false"
+					prefHeight="10.0" text="Atualizar" xmlns="http://javafx.com/javafx/8"
+					xmlns:fx="http://javafx.com/fxml/1" />
+				<Button fx:id="btnLimpar" mnemonicParsing="false" prefHeight="10.0"
+					text="Limpar" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+				<CheckBox fx:id="ckAuto" mnemonicParsing="false" text="Auto Atualizar" />
+			</items>
+		</ToolBar>
+	</children>
+</ControleMain>
