@@ -21,7 +21,6 @@ public class CarregarAtualizarArquivo implements Runnable {
 	private int quantidadeCaracteresTexto;
 	private Util util; 
 	
-	
 	public CarregarAtualizarArquivo(Editor editor, Util util){
 		this.editor = editor;
 		this.quantidadeCaracteresTexto = editor.getTexto().getText().length();
@@ -31,7 +30,7 @@ public class CarregarAtualizarArquivo implements Runnable {
 	@Override
 	public void run() {
 		editor.setPodeCarregarAtualizar(false);
-		editor.getPane().setVisible(true);
+		editor.centralizarMostrarProgresso();
 		boolean recarregarArquivo = false;
 		try {
 			if (editor.getFile() != null) {
@@ -42,7 +41,6 @@ public class CarregarAtualizarArquivo implements Runnable {
 					
 					while (br.ready()) {
 						novoArquivo.append(br.readLine() + util.getQuebralinha());
-						limiteProcesso++;
 						editor.getProgresso().setProgress(util.calcularProgresso(limiteProcesso, novoArquivo.length()));
 					}
 					
@@ -77,8 +75,7 @@ public class CarregarAtualizarArquivo implements Runnable {
 					e.printStackTrace();
 				}
 			}
-			editor.getProgresso().setVisible(false);
-			editor.getProgresso().setProgress(0);
+			editor.esconderProcesso();
 			editor.setPodeCarregarAtualizar(true);
 		}
 

@@ -16,6 +16,7 @@ public class SalvarArquivo implements Runnable {
 	Util util;
 	private StringBuilder contadorAux;
 	private BufferedWriter bw;
+	private int tamanhoArquivo;
 	
 	public SalvarArquivo(Editor editor, Util util){
 		this.editor = editor;
@@ -25,16 +26,16 @@ public class SalvarArquivo implements Runnable {
 	@Override
 	public void run() {
 		editor.setPodeCarregarAtualizar(false);
-		editor.centralizarProgresso();
-		editor.getProgresso().setVisible(true);
+		editor.centralizarMostrarProgresso();
 		try {
 			if(editor.getFile() != null){
-				editor.getTab().setText(editor.getFile().getName());
 				bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(editor.getFile()), "UTF-8"));
+				tamanhoArquivo = (editor.getTexto().getText().length()+ 1);
 				if(editor.getTexto().getText().contains("\n")){
 					String[] linhas = editor.getTexto().getText().toString().split("\n");
 					contadorAux = new StringBuilder();
 					for (String linha : linhas) {
+						tamanhoArquivo++;
 						if(linha.isEmpty()){
 							contadorAux.append(util.getQuebralinha());
 							bw.write(util.getQuebralinha());
@@ -42,11 +43,10 @@ public class SalvarArquivo implements Runnable {
 							contadorAux.append(linha + util.getQuebralinha());
 							bw.write(linha + util.getQuebralinha());
 						}
-						editor.getProgresso().setProgress(util.calcularProgresso(editor.getTexto().getText().length(), contadorAux.length()));
+						editor.getProgresso().setProgress(util.calcularProgresso(tamanhoArquivo, contadorAux.length()));
 					}
 				}else{
 					bw.write(editor.getTexto().getText());
-					editor.getProgresso().setProgress(util.calcularProgresso(editor.getTexto().getText().length(), contadorAux.length()));
 				}
 				
 				editor.getProgresso().setProgress(1);
@@ -61,9 +61,8 @@ public class SalvarArquivo implements Runnable {
 					bw.close();
 				}
 			}catch(Exception e){}
-			editor.getProgresso().setVisible(true);
-			editor.getProgresso().setProgress(0);
-			editor.setPodeCarregarAtualizar(false);
+			editor.esconderProcesso();
+			editor.setPodeCarregarAtualizar(true);
 		}
 
 	}

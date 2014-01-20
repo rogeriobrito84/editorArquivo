@@ -2,6 +2,8 @@ package model;
 
 import java.io.File;
 
+import javax.annotation.processing.Processor;
+
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.event.Event;
@@ -14,7 +16,7 @@ import javafx.scene.layout.AnchorPane;
 public class Editor {
 	private int id;
 	private File file;
-	private long ultimaModficacao = 0;
+	private long ultimaModficacao;
 	private boolean podeCarregarAtualizar = true;
 	private Tab tab;
 	private AnchorPane pane;
@@ -29,18 +31,17 @@ public class Editor {
 		tab.setText("novo "+ id);
 		tab.setId(String.valueOf(id));
 		this.id = id;
-		
 		this.texto = new TextArea();
 		this.progresso = new ProgressIndicator(0);
-		progresso.setPrefSize(300, 300);
+		progresso.setVisible(false);
 		this.largura = largura;
 		this.altura = altura;
-		pane.getChildren().addAll(progresso,texto);
+		pane.getChildren().addAll(texto,progresso);
 		
 		System.out.println("Largura do pane: " + largura.doubleValue() + "       Altura: " + altura.doubleValue());
 		
-		pane.maxHeightProperty().bind(altura.subtract(63));
-		pane.minHeightProperty().bind(altura.subtract(63));
+		pane.maxHeightProperty().bind(altura.subtract(62));
+		pane.minHeightProperty().bind(altura.subtract(62));
 		pane.minWidthProperty().bind(largura);
 		pane.maxWidthProperty().bind(largura);
 		
@@ -54,13 +55,25 @@ public class Editor {
 		
 	}
 	
-	public void centralizarProgresso(){
+	public void centralizarMostrarProgresso(){
+		progresso.setProgress(0);
+		progresso.setVisible(true);
+		double tamanho;
+		if(altura.doubleValue() >= largura.doubleValue()){
+			tamanho = largura.subtract(38).doubleValue();
+		}else{
+			tamanho = altura.subtract(100).doubleValue();
+		}
+		progresso.setPrefSize(tamanho, tamanho);
 		double centroX = (largura.doubleValue() / 2)	- (progresso.getWidth() / 2);
-		double centroY = (altura.doubleValue()  / 2)- (progresso.getHeight() / 2);
+		double centroY = (altura.subtract(63).doubleValue()  / 2)- (progresso.getHeight() / 2);
 		progresso.setLayoutX(centroX);
 		progresso.setLayoutY(centroY);
 	}
 	
+	public void esconderProcesso(){
+		progresso.setVisible(false);
+	}
 	
 	public int getId() {
 		return id;
