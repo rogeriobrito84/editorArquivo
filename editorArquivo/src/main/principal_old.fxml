@@ -29,6 +29,6 @@
 				</Menu>
 			</menus>
 		</MenuBar>
-		<TextArea id="texto" fx:id="texto" editable="false" layoutY="24.0" prefHeight="376.0" prefWidth="600.0" /><ProgressIndicator fx:id="progresso" layoutX="155.0" layoutY="79.0" prefHeight="211.0" prefWidth="293.0" progress="0.0" />
+		<TextArea id="texto" fx:id="texto" editable="false" layoutY="24.0" prefHeight="376.0" prefWidth="600.0" />
 	</children>
 </AnchorPane>

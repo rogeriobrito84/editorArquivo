@@ -1,91 +1,89 @@
 package main;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import model.Editor;
+import uitl.Util;
+import acoes.SalvarArquivo;
 
 public class ControleMain extends AnchorPane implements Initializable {
 	@FXML
-	private TextArea texto;
-	@FXML
 	private AnchorPane panePrincipal;
+	@FXML 
+	private TabPane tabPane;
 	@FXML
 	private ToolBar menu;
 	@FXML
-	private Button btnNovo;
+	private MenuButton menuArquivo;
 	@FXML
-	private Button btnAtualizar;
+	private MenuButton menuAcoes;
 	@FXML
-	private Button btnLimpar;
+	private MenuItem Novo;
 	@FXML
-	private Button btnSalvar;
+	private MenuItem abrir;
 	@FXML
-	private CheckBox ckAuto;
+	private MenuItem salvar;
 	@FXML
-	public ProgressIndicator progresso;
+	private MenuItem salvarComo;
+	@FXML
+	private MenuItem atualizar;
+	@FXML
+	private MenuItem limpar;
+	@FXML
+	private CheckBox checkAuto;
+	
+	
+	
 	// Atributos para aux
 	@FXML
-	private static DoubleProperty widthX = new SimpleDoubleProperty(500);
+	private static DoubleProperty widthX = new SimpleDoubleProperty();
 	@FXML
-	private static DoubleProperty heightX = new SimpleDoubleProperty(500);
+	private static DoubleProperty heightY = new SimpleDoubleProperty();
+	
 	// Atributos da classe
-	private FileReader fr;
-	private BufferedReader br;
-	private BufferedWriter bw;
-	private StringBuilder arquivoAnterior;
-	private String urlArquivo = "";
-	private long ultimaModficacao = 0;
+
 	private long tempoParaAtualizacao = 2000;
-	private boolean podeCarregarAtualizar = true;
+	private List<Editor> editores;
+	private Util util;
+	private int contTabs;
+	private double posicaoX;
+	private double posicaoY;
 
 	// constantes
-	private static final String quebraLinha = System
-			.getProperty("line.separator");
+	private static final String quebraLinha = System.getProperty("line.separator");
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		btnNovo.setOnAction(new EventHandler<ActionEvent>() {
+	
+		Novo.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				try {
-					if (abrirNovoArquivo() != null) {
-						carregarAtualizarArquivo();
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				novoArquivo();
 			}
 		});
 
-		btnAtualizar.setOnAction(new EventHandler<ActionEvent>() {
+		atualizar.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				try {
@@ -96,14 +94,14 @@ public class ControleMain extends AnchorPane implements Initializable {
 			}
 		});
 
-		btnLimpar.setOnAction(new EventHandler<ActionEvent>() {
+		limpar.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				limpar();
 			}
 		});
 
-		btnSalvar.setOnAction(new EventHandler<ActionEvent>() {
+		salvar.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				try {
@@ -114,72 +112,94 @@ public class ControleMain extends AnchorPane implements Initializable {
 			}
 		});
 
-		ckAuto.setOnAction(new EventHandler<ActionEvent>() {
+		checkAuto.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if (ckAuto.isSelected()) {
+				if (checkAuto.isSelected()) {
 					iniciaAtualizador();
 				}
 			}
 		});
+		//Inicializando os editores
+		editores = new ArrayList<Editor>();
+		//Incializando a classe Util
+		util = new Util();
+		//Abilitando e desabilitando menus
+		abilitarDesabilitarMenu();
 
-		// Setando o tamnho do textArea
-		texto.maxHeightProperty().bind(heightX.subtract(24));
-		texto.minHeightProperty().bind(heightX.subtract(24));
-		texto.minWidthProperty().bind(widthX);
-		texto.maxWidthProperty().bind(widthX);
+		// Setando o tamnho do tabPane
+		tabPane.maxHeightProperty().bind(heightY.subtract(35));
+		tabPane.minHeightProperty().bind(heightY.subtract(35));
+		tabPane.minWidthProperty().bind(widthX);
+		tabPane.maxWidthProperty().bind(widthX);
+		tabPane.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 
 		// Setando o tamanho do menu
 		menu.minWidthProperty().bind(widthX);
 		menu.maxWidthProperty().bind(widthX);
-		// Criando o arquivoAnterior
-		arquivoAnterior = new StringBuilder();
+		
+//		menu.setOnMousePressed(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				Stage palco = (Stage) menu.getScene().getWindow();
+//				posicaoX = event.getScreenX() - palco.getX();
+//				posicaoY = event.getScreenY() - palco.getY();
+//				
+//			}
+//		} );
+//
+//		menu.setOnMouseDragged(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				Stage palco = (Stage) menu.getScene().getWindow();
+//				palco.setX(event.getScreenX() - posicaoX);
+//				palco.setY(event.getScreenY() - posicaoY);
+//			}
+//		});
+
 	}
 
-	public File abrirNovoArquivo() {
-		FileChooser chooser = new FileChooser();
-		FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter(
-				"Adicione arquivos (TXT)", "*.txt");
-		chooser.getExtensionFilters().add(extension);
-		File file = chooser
-				.showOpenDialog((Stage) texto.getScene().getWindow());
-		if (file != null) {
-			urlArquivo = file.getAbsolutePath();
-		}
-		return file;
+	public void abrirNovoArquivo() {
+		
 	}
 
 	public void limpar() {
-		 if(texto != null){
-			 texto.clear();
-		 }
-		 ultimaModficacao = 0;
-		 arquivoAnterior = new StringBuilder();
+//		 if(texto != null){
+//			 texto.clear();
+//		 }
+//		 ultimaModficacao = 0;
+//		 arquivoAnterior = new StringBuilder();
+
 	}
 
 	/**
 	 * Função que cria uma tarefa para ficar atualizando o arquivo
 	 */
 	public void iniciaAtualizador() {
-		Task<Void> tarefa = new TarefaAutoAtualizar();
-		new Thread(tarefa).start();
+		//AutoAtualizar auto = new AutoAtualizar(editores, checkAuto, tempoParaAtualizacao)
 	}
-
-	// public void carregar() throws Exception{
-	// limpar();
-	// Task<Void> tarefa = new TarefaCarregarArquivo();
-	// configurarProgresso(tarefa);
-	// new Thread(tarefa).start();
-	// }
-
+	
+	public void novoArquivo(){
+		contTabs++;
+		final Editor editor = new Editor(contTabs, widthX, heightY); 
+		tabPane.getTabs().add(editor.getTab());
+		editores.add(editor);
+		editor.getTab().setOnClosed(new EventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+				removerEditor(editores, editor.getId());
+				abilitarDesabilitarMenu();
+			}
+		});
+		abilitarDesabilitarMenu();
+	}
+	
 	public void carregarAtualizarArquivo() {
-		if (podeCarregarAtualizar) {
-			Task<Void> tarefa = new TarefaCarreggarAtualizarArquivo();
-			configurarProgresso(tarefa);
-			new Thread(tarefa).start();
-		}
+		
 	}
 
+	
+	
 	// public class TarefaAtualizarArquivo extends Task<Void>{
 	// @Override
 	// protected Void call() throws Exception {
@@ -238,65 +258,69 @@ public class ControleMain extends AnchorPane implements Initializable {
 	//
 	// }
 
-	class TarefaCarreggarAtualizarArquivo extends Task<Void> {
-		@Override
-		protected Void call() throws IOException {
-			podeCarregarAtualizar = false;
-			progresso.setVisible(true);
-			boolean recarregarArquivo = false;
-			File file;
-			try {
-				file = recuperarArquivo(urlArquivo);
-				StringBuilder novoArquivo = null;
-				String novoTexto = "";
-				if (file != null) {
-					if (ultimaModficacao != file.lastModified()) {
-						fr = new FileReader(file);
-						br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-						int limiteProcesso = (int) (file.length() + 1);
-						int tamanhoArquivoAnterior = arquivoAnterior.length();
-						novoArquivo = new StringBuilder();
-						while (br.ready()) {
-							novoArquivo.append(br.readLine() + quebraLinha);
-							limiteProcesso++;
-							progresso.setProgress(calcularProgresso(limiteProcesso, novoArquivo.length()));
-						}
-						progresso.setProgress(1);
-						if (novoArquivo.length() >= tamanhoArquivoAnterior) {
-							novoTexto = novoArquivo.substring(0,
-									tamanhoArquivoAnterior);
-							if (novoTexto.equals(arquivoAnterior.toString())) {
-								novoTexto = novoArquivo.substring(tamanhoArquivoAnterior);
-							} else {
-								recarregarArquivo = true;
-							}
-						} else {
-							recarregarArquivo = true;
-						}
-						if (recarregarArquivo) {
-							arquivoAnterior = novoArquivo;
-							texto.setText(arquivoAnterior.toString());
-						} else {
-							arquivoAnterior.append(novoTexto);
-							texto.appendText(novoTexto);
-						}
-						ultimaModficacao = file.lastModified();
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				progresso.setProgress(0);
-				progresso.setVisible(false);
-				try{
-					br.close();
-					fr.close();
-				}catch(Exception e){}
-				podeCarregarAtualizar = true;
-			}
-			return null;
-		}
-	}
+//	class TarefaCarreggarAtualizarArquivo implements Runnable {
+//		public TarefaCarreggarAtualizarArquivo(){
+//			
+//		}
+//		@Override
+//		public void run() {
+//			podeCarregarAtualizar = false;
+//			progresso.setVisible(true);
+//			boolean recarregarArquivo = false;
+//			File file;
+//			try {
+//				file = recuperarArquivo(urlArquivo);
+//				StringBuilder novoArquivo = null;
+//				String novoTexto = "";
+//				if (file != null) {
+//					
+//				}
+//				if (ultimaModficacao != file.lastModified()) {
+//					br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+//					int limiteProcesso = (int) (file.length() + 1);
+//					int tamanhoArquivoAnterior = arquivoAnterior.length();
+//					novoArquivo = new StringBuilder();
+//					while (br.ready()) {
+//						novoArquivo.append(br.readLine() + quebraLinha);
+//						limiteProcesso++;
+//						progresso.setProgress(calcularProgresso(limiteProcesso, novoArquivo.length()));
+//					}
+//					progresso.setProgress(1);
+//					if (novoArquivo.length() >= tamanhoArquivoAnterior) {
+//						novoTexto = novoArquivo.substring(0,
+//								tamanhoArquivoAnterior);
+//						if (novoTexto.equals(arquivoAnterior.toString())) {
+//							novoTexto = novoArquivo.substring(tamanhoArquivoAnterior);
+//						} else {
+//							recarregarArquivo = true;
+//						}
+//					} else {
+//						recarregarArquivo = true;
+//					}
+//					if (recarregarArquivo) {
+//						arquivoAnterior = novoArquivo;
+//						texto.setText(arquivoAnterior.toString());
+//					} else {
+//						arquivoAnterior.append(novoTexto);
+//						texto.appendText(novoTexto);
+//					}
+//					ultimaModficacao = file.lastModified();
+//				}
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			} finally {
+//				progresso.setProgress(0);
+//				progresso.setVisible(false);
+//				try{
+//					br.close();
+//				}catch(Exception e){}
+//				podeCarregarAtualizar = true;
+//			}
+//			
+//			
+//		}
+//		
+//	}
 
 	// public void atualizar() throws Exception{
 	// File file = recuperarArquivo(urlArquivo);
@@ -354,57 +378,68 @@ public class ControleMain extends AnchorPane implements Initializable {
 	//
 
 	private void salvarArquivo() {
-		if(podeCarregarAtualizar){
-			Task<Void> tarefa = new TarefaSalvarArquivo();
-			new Thread(tarefa).start();
+		boolean temArquivo = false;
+		int index =   tabPane.getSelectionModel().getSelectedIndex();
+		Tab tab = tabPane.getTabs().get(index);
+		Editor editor = getEditor(Integer.parseInt(tab.getId()));
+		if(editor.getFile() == null){
+			if(util.salvarNovoArquivo(editor)){
+				temArquivo = true;
+			}			
+		}else{
+			temArquivo = true;
+		}
+		if(temArquivo){
+			SalvarArquivo salvar = new SalvarArquivo(editor, util);
+			new Thread(salvar).start();
 		}
 	}
 
-	class TarefaSalvarArquivo extends Task<Void> {
-		@Override
-		protected Void call() throws Exception {
-			podeCarregarAtualizar = false;
-			progresso.setVisible(true);
-			File file = recuperarArquivo(urlArquivo);
-			try {
-				if (file != null && arquivoAnterior != null) {
-					FileWriter fw = new FileWriter(file);
-					bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
-					if(arquivoAnterior.toString().contains("\n")){
-						String[] linhas = arquivoAnterior.toString().split("\n");
-						StringBuilder auxContador = new StringBuilder();
-						for (String linha : linhas) {
-							if(linha.isEmpty()){
-								auxContador.append(quebraLinha);
-								bw.write(quebraLinha);
-							}else{
-								auxContador.append(linha);
-								bw.write(linha);
-							}
-							progresso.setProgress(calcularProgresso(arquivoAnterior.length(), auxContador.length()));
-						}
-					}else{
-						bw.write(arquivoAnterior.toString());
-					}
-					progresso.setProgress(1);
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-					progresso.setVisible(false);
-					progresso.setProgress(0);
-					try{
-						fr.close();
-						bw.close();
-					}catch(Exception e){}
-					podeCarregarAtualizar = true;
-			}
-			return null;
-		}
-
-	}
+//	class TarefaSalvarArquivo extends Task<Void> {
+//		@Override
+//		protected Void call() throws Exception {
+//			podeCarregarAtualizar = false;
+//			progresso.setVisible(true);
+//			File file = recuperarArquivo(urlArquivo);
+//			try {
+//				StringBuilder contadorAux;
+//				arquivoAnterior = new StringBuilder();
+//				arquivoAnterior.append(texto.getText());
+//				
+//				bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+//				if(arquivoAnterior.toString().contains("\n")){
+//					String[] linhas = arquivoAnterior.toString().split("\n");
+//					StringBuilder auxContador = new StringBuilder();
+//					for (String linha : linhas) {
+//						if(linha.isEmpty()){
+//							auxContador.append(quebraLinha);
+//							bw.write(quebraLinha);
+//						}else{
+//							auxContador.append(linha);
+//							bw.write(linha);
+//						}
+//						progresso.setProgress(calcularProgresso(arquivoAnterior.length(), auxContador.length()));
+//					}
+//				}else{
+//					bw.write(arquivoAnterior.toString());
+//				}
+//				progresso.setProgress(1);
+//			} catch (FileNotFoundException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			} finally {
+//					progresso.setVisible(false);
+//					progresso.setProgress(0);
+//					try{
+//						bw.close();
+//					}catch(Exception e){}
+//					podeCarregarAtualizar = true;
+//			}
+//			return null;
+//		}
+//
+//	}
 
 	public File recuperarArquivo(String urlArquivo) throws Exception {
 		File file = null;
@@ -459,43 +494,78 @@ public class ControleMain extends AnchorPane implements Initializable {
 	// }
 	// }
 
-	public void configurarProgresso(Task<Void> tarefa) {
-		double centroX = (widthX.doubleValue() / 2)	- (progresso.getWidth() / 2);
-		double centroY = (heightX.doubleValue() / 2)- (progresso.getHeight() / 2);
-		progresso.setLayoutX(centroX);
-		progresso.setLayoutY(centroY);
-	}
+//	public void configurarProgresso() {
+//		double centroX = (widthX.doubleValue() / 2)	- (progresso.getWidth() / 2);
+//		double centroY = (heightY.doubleValue() / 2)- (progresso.getHeight() / 2);
+//		progresso.setLayoutX(centroX);
+//		progresso.setLayoutY(centroY);
+//	}
 
-	public class TarefaAutoAtualizar extends Task<Void> {
-		@Override
-		protected Void call() throws Exception {
-			int i = 0;
-			while (ckAuto.isSelected()) {
-				System.out.println("Vericação: " + i++);
-				try {
-					carregarAtualizarArquivo();
-					Thread.sleep(tempoParaAtualizacao);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+//	public class TarefaAutoAtualizar extends Task<Void> {
+//		@Override
+//		protected Void call() throws Exception {
+//			int i = 0;
+//			while (ckAuto.isSelected()) {
+//				System.out.println("Vericação: " + i++);
+//				try {
+//					carregarAtualizarArquivo();
+//					Thread.sleep(tempoParaAtualizacao);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			return null;
+//		}
+//	}
+
+//	public double calcularProgresso(int total, int atual) {
+//		double resultado = 0;
+//		if (total != 0) {
+//			resultado = BigDecimal
+//					.valueOf(atual)
+//					.divide(BigDecimal.valueOf(total), 2,
+//							RoundingMode.HALF_EVEN).doubleValue();
+//		}
+//		return resultado;
+//	}
+	
+	private void removerEditor(List<Editor> lista, int index){
+		for(int i = index; i < lista.size();i++){
+			if(lista.get(i).getId() == index){
+				lista.remove(lista.get(i));
 			}
-			return null;
 		}
 	}
-
-	public double calcularProgresso(int total, int atual) {
-		double resultado = 0;
-		if (total != 0) {
-			resultado = BigDecimal
-					.valueOf(atual)
-					.divide(BigDecimal.valueOf(total), 2,
-							RoundingMode.HALF_EVEN).doubleValue();
+	
+	private Editor getEditor(int id){
+		Editor editor = null;
+		for(int i = 0; i < editores.size();i++){
+			if(editores.get(i).getId() == id){
+				editor = editores.get(i);
+				break;
+			}
 		}
-		return resultado;
+		return editor;
 	}
-
+	
+	public void abilitarDesabilitarMenu(){
+		if(tabPane.getTabs().size() > 0){
+			salvar.setDisable(false);
+			salvarComo.setDisable(false);
+			atualizar.setDisable(false);
+			limpar.setDisable(false);
+			checkAuto.setDisable(false);
+		}else{
+			salvar.setDisable(true);
+			salvarComo.setDisable(true);
+			atualizar.setDisable(true);
+			limpar.setDisable(true);
+			checkAuto.setDisable(true);
+		}
+	}
+	
 	public static DoubleProperty heightXProperty() {
-		return heightX;
+		return heightY;
 	}
 
 	public static DoubleProperty widthXProperty() {
