@@ -1,16 +1,13 @@
 package acoes;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import javax.security.auth.callback.TextOutputCallback;
-
-import uitl.Util;
-
+import javafx.scene.control.TextArea;
 import model.Editor;
+import uitl.Util;
 
 public class CarregarAtualizarArquivo implements Runnable {
 	private Editor editor;
@@ -19,11 +16,11 @@ public class CarregarAtualizarArquivo implements Runnable {
 	private int limiteProcesso;
 	private StringBuilder novoArquivo = null;
 	private int quantidadeCaracteresTexto;
+	private TextArea areaAuxiliar;
 	private Util util; 
 	
 	public CarregarAtualizarArquivo(Editor editor, Util util){
 		this.editor = editor;
-		this.quantidadeCaracteresTexto = editor.getTexto().getText().length();
 		this.util = util;
 	}
 	
@@ -32,23 +29,35 @@ public class CarregarAtualizarArquivo implements Runnable {
 		editor.setPodeCarregarAtualizar(false);
 		editor.centralizarMostrarProgresso();
 		boolean recarregarArquivo = false;
+		String linha;
 		try {
-			if (editor.getFile() != null) {
+			if (editor.getFile() != null && editor.getFile().canRead()) {
 				if (editor.getUltimaModficacao() != editor.getFile().lastModified()) {
 					br = new BufferedReader(new InputStreamReader(new FileInputStream(editor.getFile()), "UTF-8"));
 					limiteProcesso = (int) editor.getFile().length();
+					quantidadeCaracteresTexto = editor.getTexto().getText().length();
 					novoArquivo = new StringBuilder();
 					
 					while (br.ready()) {
-						novoArquivo.append(br.readLine() + util.getQuebralinha());
+						linha = br.readLine();
+						if(linha.isEmpty()){
+							novoArquivo.append(util.getQuebralinha());
+							quantidadeCaracteresTexto++;
+						}else{
+							novoArquivo.append(linha);
+							if(novoArquivo.length() < limiteProcesso){
+								novoArquivo.append(util.getQuebralinha());
+								quantidadeCaracteresTexto++;
+							}
+						}
 						editor.getProgresso().setProgress(util.calcularProgresso(limiteProcesso, novoArquivo.length()));
 					}
 					
-					editor.getProgresso().setProgress(1);
-					
-					if (novoArquivo.length() >= editor.getTexto().getText().length()) {
+					if (novoArquivo.length() >= quantidadeCaracteresTexto) {
 						novoTexto = novoArquivo.substring(0,quantidadeCaracteresTexto);
-						if (novoTexto.equals(editor.getTexto().getText())) {
+						areaAuxiliar = new TextArea();
+						areaAuxiliar.appendText(novoTexto);
+						if (areaAuxiliar.getText().equals(editor.getTexto().getText())) {
 							novoTexto = novoArquivo.substring(quantidadeCaracteresTexto);
 						} else {
 							recarregarArquivo = true;

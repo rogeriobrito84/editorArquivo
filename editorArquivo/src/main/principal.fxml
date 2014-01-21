@@ -6,27 +6,41 @@
 <?import main.*?>
 
 
-<ControleMain id="panePrinciipal" fx:id="panePrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="300.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.ControleMain">
+<ControleMain id="panePrinciipal" fx:id="panePrincipal"
+	maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="300.0"
+	prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8"
+	xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.ControleMain">
 	<children>
-		<ToolBar fx:id="menu" minHeight="35.0" minWidth="300.0" prefHeight="35.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
+		<ToolBar fx:id="menu" minHeight="35.0" minWidth="300.0"
+			prefHeight="35.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
 			<items>
-				<MenuButton fx:id="menuArquivo" minHeight="25.0" minWidth="80.0" mnemonicParsing="false" text="Arquivo" xmlns:fx="http://javafx.com/fxml">
+				<MenuButton fx:id="menuArquivo" minHeight="25.0"
+					minWidth="60.0" mnemonicParsing="false" text="Arquivo"
+					xmlns:fx="http://javafx.com/fxml">
 					<items>
 						<MenuItem fx:id="Novo" mnemonicParsing="false" text="Novo" />
 						<MenuItem fx:id="abrir" mnemonicParsing="false" text="Abrir" />
-						<MenuItem fx:id="salvar" mnemonicParsing="false" text="Salvar" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
-						<MenuItem fx:id="salvarComo" mnemonicParsing="false" text="Salvar Como" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+						<MenuItem fx:id="salvar" mnemonicParsing="false" text="Salvar"
+							xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+						<MenuItem fx:id="salvarComo" mnemonicParsing="false"
+							text="Salvar Como" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
 					</items>
 				</MenuButton>
-				<MenuButton fx:id="menuAcoes" minHeight="25.0" minWidth="80.0" mnemonicParsing="false" text="Acões" xmlns:fx="http://javafx.com/fxml">
+				<MenuButton fx:id="menuAcoes" minHeight="25.0" minWidth="60.0"
+					mnemonicParsing="false" text="Acões" xmlns:fx="http://javafx.com/fxml">
 					<items>
 						<MenuItem fx:id="atualizar" mnemonicParsing="false" text="Atualizar" />
+						<MenuItem fx:id="atualizarTudo" mnemonicParsing="false" text="Atualizar Tudo" />
 						<MenuItem fx:id="limpar" mnemonicParsing="false" text="Limpar" />
+						<MenuItem fx:id="limparSalvar" mnemonicParsing="false" text="Limpar e Salvar" />
 					</items>
 				</MenuButton>
-				<CheckBox fx:id="checkAuto" mnemonicParsing="false" text="Auto Atualizar" />
+				<CheckBox fx:id="checkAuto" mnemonicParsing="false"
+					text="Auto Atualizar" />
 			</items>
 		</ToolBar>
-		<TabPane fx:id="tabPane" layoutY="35.0" prefHeight="376.0" prefWidth="600.0" side="BOTTOM" tabMinHeight="20.0" tabMinWidth="50.0" xmlns:fx="http://javafx.com/fxml" />
+		<TabPane fx:id="tabPane" layoutY="35.0" prefHeight="376.0"
+			prefWidth="600.0" side="BOTTOM" tabMinHeight="20.0" tabMinWidth="50.0"
+			xmlns:fx="http://javafx.com/fxml" />
 	</children>
 </ControleMain>

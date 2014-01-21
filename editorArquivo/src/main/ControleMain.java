@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.concurrent.Task;
@@ -24,8 +25,10 @@ import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import model.Editor;
 import uitl.Util;
+import acoes.AutoAtualizarTudo;
 import acoes.CarregarAtualizarArquivo;
 import acoes.SalvarArquivo;
 
@@ -51,7 +54,11 @@ public class ControleMain extends AnchorPane implements Initializable {
 	@FXML
 	private MenuItem atualizar;
 	@FXML
+	private MenuItem atualizarTudo;
+	@FXML
 	private MenuItem limpar;
+	@FXML
+	private MenuItem limparSalvar;
 	@FXML
 	private CheckBox checkAuto;
 	
@@ -65,15 +72,13 @@ public class ControleMain extends AnchorPane implements Initializable {
 	
 	// Atributos da classe
 
-	private long tempoParaAtualizacao = 2000;
+	private long tempoParaAtualizacao = 1000;
 	private List<Editor> editores;
 	private Util util;
 	private int contTabs;
+	private TarefaAutoAtualizar tarefaAutoAtualizar;
 	private double posicaoX;
 	private double posicaoY;
-
-	// constantes
-	private static final String quebraLinha = System.getProperty("line.separator");
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -120,6 +125,13 @@ public class ControleMain extends AnchorPane implements Initializable {
 				atualizarArquivo();
 			}
 		});
+		
+		atualizarTudo.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				AtualizarTodosArquivos();
+			}
+		});
 
 		limpar.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -127,13 +139,19 @@ public class ControleMain extends AnchorPane implements Initializable {
 				limpar();
 			}
 		});
-
+		
+		limparSalvar.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				limparSalvar();
+			}
+		});
 
 		checkAuto.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				if (checkAuto.isSelected()) {
-					iniciaAtualizador();
+					iniciaTarefaAutoAtualizar();
 				}
 			}
 		});
@@ -211,10 +229,12 @@ public class ControleMain extends AnchorPane implements Initializable {
 				editor = novoArquivo();
 				editor.getTab().setText(file.getName().replace(".txt", ""));
 				editor.setFile(file);
-				CarregarAtualizarArquivo carregar = new CarregarAtualizarArquivo(editor, util);
-				new Thread(carregar).start();
-				tab = getTab(editor.getId());
-				tabPane.getSelectionModel().select(tab);
+				if(editor.isPodeCarregarAtualizar()){
+					CarregarAtualizarArquivo carregar = new CarregarAtualizarArquivo(editor, util);
+					new Thread(carregar).start();
+					tab = getTab(editor.getId());
+					tabPane.getSelectionModel().select(tab);
+				}
 			}
 		}
 	}
@@ -229,11 +249,15 @@ public class ControleMain extends AnchorPane implements Initializable {
 				Editor editorAux = getEditorPorNome(editor.getFile().getAbsolutePath());
 				if(editorAux != null){
 					Tab tab = getTab(editorAux.getId());
-					tabPane.getTabs().remove(tab);
-					editor.setFile(editorAux.getFile());
-					editor.getTab().setText(editor.getFile().getName().replace(".txt", ""));
-					removerEditor(editorAux.getId());
-					temArquivo = true;
+					if(Integer.valueOf(tab.getId()) != getIdTabSelecionado()){
+						removerEditor(editorAux.getId());
+						tabPane.getTabs().remove(tab);
+					}
+					if(editor.isPodeCarregarAtualizar()){
+						editor.setFile(editorAux.getFile());
+						editor.getTab().setText(editor.getFile().getName().replace(".txt", ""));
+						temArquivo = true;
+					}
 				}
 			}
 		}else{
@@ -252,13 +276,17 @@ public class ControleMain extends AnchorPane implements Initializable {
 			Editor editorAux = getEditorPorNome(editor.getFile().getAbsolutePath());
 			if(editorAux != null){
 				Tab tab = getTab(editorAux.getId());
-				tabPane.getTabs().remove(tab);
+				if(Integer.valueOf(tab.getId()) != getIdTabSelecionado()){
+					tabPane.getTabs().remove(tab);
+					removerEditor(editorAux.getId());
+				}
 				editor.setFile(editorAux.getFile());
-				removerEditor(editorAux.getId());
 			}
-			editor.getTab().setText(editor.getFile().getName().replace(".txt", ""));
-			SalvarArquivo salvar = new SalvarArquivo(editor, util);
-			new Thread(salvar).start();
+			if(editor.isPodeCarregarAtualizar()){
+				editor.getTab().setText(editor.getFile().getName().replace(".txt", ""));
+				SalvarArquivo salvar = new SalvarArquivo(editor, util);
+				new Thread(salvar).start();
+			}
 		}			
 	}
 	
@@ -267,27 +295,62 @@ public class ControleMain extends AnchorPane implements Initializable {
 		int id = getIdTabSelecionado();
 		if(id > 0){
 			editor = getEditorPorId(id);
-			if(editor != null){
-				if(editor.isPodeCarregarAtualizar()){
-					CarregarAtualizarArquivo atualizar = new CarregarAtualizarArquivo(editor, util);
-					new Thread(atualizar).start();
-				}
+			if(editor != null && editor.getFile() != null && editor.isPodeCarregarAtualizar()){
+				CarregarAtualizarArquivo atualizar = new CarregarAtualizarArquivo(editor, util);
+				new Thread(atualizar).start();
 			}
 		}
 	}
 	
+	public void AtualizarTodosArquivos(){
+		if(editores.size() > 0){
+			AutoAtualizarTudo atualizarTudo = new AutoAtualizarTudo(editores, util);
+			new Thread(atualizarTudo).start();
+		}
+	}
 	
 	public void limpar() {
-		Tab tab =   tabPane.getSelectionModel().getSelectedItem();
-		int id = Integer.valueOf(tab.getId());
-		
+		int id = getIdTabSelecionado();
+		if(id > 0){
+			Editor editor = getEditorPorId(id);
+			editor.getTexto().clear();
+		}
 	}
+	
+	public void limparSalvar(){
+		int id = getIdTabSelecionado();
+		if(id > 0){
+			Editor editor = getEditorPorId(id);
+			editor.getTexto().clear();
+			if(editor.getFile() != null && editor.isPodeCarregarAtualizar()){
+				SalvarArquivo salvar = new SalvarArquivo(editor, util);
+				new Thread(salvar).start();
+			}
+		}
+	}
+	
 
 	/**
 	 * Função que cria uma tarefa para ficar atualizando o arquivo
 	 */
-	public void iniciaAtualizador() {
-		//AutoAtualizar auto = new AutoAtualizar(editores, checkAuto, tempoParaAtualizacao)
+	public void iniciaTarefaAutoAtualizar() {
+		if(editores.size() > 0){
+			tarefaAutoAtualizar = new TarefaAutoAtualizar();
+			new  Thread(tarefaAutoAtualizar).start();
+		}
+		Stage palco = (Stage) checkAuto.getScene().getWindow();
+		Platform.setImplicitExit(false);
+
+		palco.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+				if(tarefaAutoAtualizar.isRunning()){
+					tarefaAutoAtualizar.cancel();
+					Platform.exit();
+					event.consume();
+				}
+			}
+		});
 	}
 	
 	
@@ -630,9 +693,11 @@ public class ControleMain extends AnchorPane implements Initializable {
 	private Editor getEditorPorNome(String nome){
 		Editor editor = null;
 		for(int i = 0; i < editores.size();i++){
-			if(editores.get(i).getFile().getAbsolutePath().equals(nome)){
-				editor = editores.get(i);
-				break;
+			if(editores.get(i).getFile() != null){
+				 if(editores.get(i).getFile().getAbsolutePath().equals(nome)){
+					 editor = editores.get(i);
+					 break;
+				 }
 			}
 		}
 		return editor;
@@ -663,6 +728,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 			salvar.setDisable(false);
 			salvarComo.setDisable(false);
 			atualizar.setDisable(false);
+			atualizarTudo.setDisable(false);
 			limpar.setDisable(false);
 			checkAuto.setDisable(false);
 		}else{
@@ -671,10 +737,11 @@ public class ControleMain extends AnchorPane implements Initializable {
 			atualizar.setDisable(true);
 			limpar.setDisable(true);
 			checkAuto.setDisable(true);
+			atualizarTudo.setDisable(true);
 		}
 	}
 	
-	public class AutoAtualizar extends Task<Void>{
+	public class TarefaAutoAtualizar extends Task<Void>{
 		private int id;
 		private Editor editor;
 		@Override
@@ -683,7 +750,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 				id = getIdTabSelecionado();
 				if(id > 0){
 					editor = getEditorPorId(id);
-					if(editor != null){
+					if(editor != null && editor.getFile() != null){
 						if(editor.isPodeCarregarAtualizar()){
 							CarregarAtualizarArquivo atualizar = new CarregarAtualizarArquivo(editor, util);
 							new Thread(atualizar).start();

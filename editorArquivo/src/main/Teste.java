@@ -14,6 +14,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 public class Teste {
@@ -22,8 +23,18 @@ public class Teste {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Util util = new Util();
-		System.out.println("rogerio " + util.getQuebralinha()+ " rogerio 2");
+		String string = "Rogerio\nrogerio\n";
+		TextArea texto = new TextArea();
+		
+		String[] partes = string.split("[\\n]");
+		
+		for (String p : partes) {
+			System.out.println(p);
+		}
+		
+		
+		
+		
 		
 	}
 

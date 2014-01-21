@@ -21,12 +21,11 @@ public class Main extends Application{
 			FXMLLoader loader = new FXMLLoader(ControleMain.class.getResource("principal.fxml"));
 			try {
 				//palco = new Stage(StageStyle.TRANSPARENT);
+				
 				palco.setMinWidth(100);
 				palco.setMinHeight(100);
 				ControleMain pane = (ControleMain) loader.load();
 				Scene cena = new Scene(pane,Color.TRANSPARENT);
-				System.out.println("Altura da cena: " + cena.heightProperty().doubleValue());
-				System.out.println("Largura:  da cena" + cena.widthProperty().doubleValue());
 				ControleMain.heightXProperty().bind(cena.heightProperty().subtract(0));
 				ControleMain.widthXProperty().bind(cena.widthProperty().subtract(0)); 
 				
