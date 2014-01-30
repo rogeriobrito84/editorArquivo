@@ -16,10 +16,11 @@ public class Util {
 	
 	public double calcularProgresso(int total, int atual) {
 		double resultado = 0;
+		
 		if (total != 0) {
-			resultado = BigDecimal.valueOf(atual).divide(BigDecimal.valueOf(total), 2,
-							RoundingMode.HALF_EVEN).doubleValue();
+			resultado = BigDecimal.valueOf(atual).divide(BigDecimal.valueOf(total), 2,RoundingMode.HALF_EVEN).doubleValue();
 		}
+		
 		return resultado;
 	}
 	

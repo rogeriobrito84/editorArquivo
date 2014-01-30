@@ -23,11 +23,17 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import model.Editor;
 import uitl.Util;
+import acoes.AutoAtualizar;
 import acoes.AutoAtualizarTudo;
 import acoes.CarregarAtualizarArquivo;
 import acoes.SalvarArquivo;
@@ -52,6 +58,8 @@ public class ControleMain extends AnchorPane implements Initializable {
 	@FXML
 	private MenuItem salvarComo;
 	@FXML
+	private MenuItem fechar;
+	@FXML
 	private MenuItem atualizar;
 	@FXML
 	private MenuItem atualizarTudo;
@@ -72,13 +80,25 @@ public class ControleMain extends AnchorPane implements Initializable {
 	
 	// Atributos da classe
 
-	private long tempoParaAtualizacao = 1000;
+	private long tempoParaAtualizacao = 2000;
 	private List<Editor> editores;
 	private Util util;
 	private int contTabs;
-	private TarefaAutoAtualizar tarefaAutoAtualizar;
+	private Thread threadAtualizar;
 	private double posicaoX;
 	private double posicaoY;
+	
+	//Teclas de atalho
+	private KeyCodeCombination ctrlNovo;
+	private KeyCodeCombination ctrlAbrir;
+	private KeyCodeCombination ctrlSalvar;
+	private KeyCodeCombination ctrlShifttSalvarComo;
+	private KeyCodeCombination altFechar;
+	private KeyCodeCombination ctrlAtualizar;
+	private KeyCodeCombination ctrlShiftAtualizarTudo;
+	private KeyCodeCombination ctrlLimpar;
+	private KeyCodeCombination ctrlShiftLimparSalvar;
+	private KeyCodeCombination ctrlShiftAltAutoAtualizar;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -86,14 +106,24 @@ public class ControleMain extends AnchorPane implements Initializable {
 		Novo.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				novoArquivo();
+				try {
+					novoArquivo();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
 		abrir.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				abrirArquivo();
+				try {
+					abrirArquivo();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -113,6 +143,17 @@ public class ControleMain extends AnchorPane implements Initializable {
 			public void handle(ActionEvent event) {
 				try {
 					salvarArquivoComo();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		fechar.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				try {
+					fecharTab();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -152,9 +193,23 @@ public class ControleMain extends AnchorPane implements Initializable {
 			public void handle(ActionEvent event) {
 				if (checkAuto.isSelected()) {
 					iniciaTarefaAutoAtualizar();
+				}else{
+					if(threadAtualizar != null){
+						try{
+							if(threadAtualizar.isAlive()){
+								threadAtualizar.interrupt();
+								threadAtualizar = null;
+							}
+						}catch(Exception e){
+							
+						}
+					}
 				}
 			}
 		});
+		checkAuto.setTooltip(new Tooltip("CTRL + SHIFT + ALT + T"));
+		
+		
 		//Inicializando os editores
 		editores = new ArrayList<Editor>();
 		//Incializando a classe Util
@@ -169,11 +224,37 @@ public class ControleMain extends AnchorPane implements Initializable {
 		tabPane.maxWidthProperty().bind(widthX);
 		tabPane.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 		
+		//Capturar eventos do teclado
+		panePrincipal.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				try {
+					acessarAtalhos(event);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		});
 		
-
 		// Setando o tamanho do menu
 		menu.minWidthProperty().bind(widthX);
 		menu.maxWidthProperty().bind(widthX);
+		
+		//Inicializando as teclas de atalho
+		ctrlNovo = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
+		ctrlAbrir = new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN);
+		ctrlSalvar = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
+		ctrlShifttSalvarComo = new KeyCodeCombination(KeyCode.S,KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN);
+		altFechar = new KeyCodeCombination(KeyCode.F, KeyCombination.ALT_DOWN);
+		ctrlAtualizar = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
+		ctrlShiftAtualizarTudo = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN);
+		ctrlLimpar = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN);
+		ctrlShiftLimparSalvar = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN);
+		ctrlShiftAltAutoAtualizar = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN, KeyCombination.ALT_DOWN);
+		
+		
 		
 //		menu.setOnMousePressed(new EventHandler<MouseEvent>() {
 //			@Override
@@ -196,8 +277,9 @@ public class ControleMain extends AnchorPane implements Initializable {
 
 	}
 	
-	public Editor novoArquivo(){
+	public Editor novoArquivo() throws InterruptedException{
 		contTabs++;
+		Tab tab;
 		Editor editor = new Editor(contTabs, widthX, heightY); 
 		tabPane.getTabs().add(editor.getTab());
 		editores.add(editor);
@@ -211,11 +293,13 @@ public class ControleMain extends AnchorPane implements Initializable {
 				
 			}
 		});
+		tab = getTab(editor.getId());
+		tabPane.getSelectionModel().select(tab);
 		abilitarDesabilitarMenu();
 		return editor;
 	}
 
-	public void abrirArquivo() {
+	public void abrirArquivo() throws InterruptedException {
 		Editor editor;
 		Stage palco =  (Stage) menu.getScene().getWindow();
 		File file = util.abrirNovoArquivo(palco);
@@ -246,26 +330,26 @@ public class ControleMain extends AnchorPane implements Initializable {
 		Editor editor = getEditorPorId(id);
 		if(editor.getFile() == null){
 			if(util.salvarNovoArquivo(editor)){
-				Editor editorAux = getEditorPorNome(editor.getFile().getAbsolutePath());
+				Editor editorAux = getEditorEmOutraTab(id, editor.getFile().getAbsolutePath());
 				if(editorAux != null){
 					Tab tab = getTab(editorAux.getId());
 					if(Integer.valueOf(tab.getId()) != getIdTabSelecionado()){
 						removerEditor(editorAux.getId());
 						tabPane.getTabs().remove(tab);
 					}
-					if(editor.isPodeCarregarAtualizar()){
-						editor.setFile(editorAux.getFile());
-						editor.getTab().setText(editor.getFile().getName().replace(".txt", ""));
-						temArquivo = true;
-					}
+					editor.setFile(editorAux.getFile());
 				}
+				editor.getTab().setText(editor.getFile().getName().replace(".txt", ""));
+				temArquivo = true;
 			}
 		}else{
 			temArquivo = true;
 		}
 		if(temArquivo){
-			SalvarArquivo salvar = new SalvarArquivo(editor, util);
-			new Thread(salvar).start();
+			if(editor.isPodeCarregarAtualizar()){
+				SalvarArquivo salvar = new SalvarArquivo(editor, util);
+				new Thread(salvar).start();
+			}
 		}
 	}
 	
@@ -273,7 +357,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 		int id = getIdTabSelecionado();
 		Editor editor = getEditorPorId(id);
 		if(util.salvarNovoArquivo(editor)){
-			Editor editorAux = getEditorPorNome(editor.getFile().getAbsolutePath());
+			Editor editorAux = getEditorEmOutraTab(id, editor.getFile().getAbsolutePath());
 			if(editorAux != null){
 				Tab tab = getTab(editorAux.getId());
 				if(Integer.valueOf(tab.getId()) != getIdTabSelecionado()){
@@ -288,6 +372,16 @@ public class ControleMain extends AnchorPane implements Initializable {
 				new Thread(salvar).start();
 			}
 		}			
+	}
+	
+	public void fecharTab(){
+		if(tabPane.getTabs().size() > 0){
+			int id = getIdTabSelecionado();
+			Tab tab = getTab(id);
+			tabPane.getTabs().remove(tab);
+			removerEditor(id);
+			abilitarDesabilitarMenu();
+		}
 	}
 	
 	public void atualizarArquivo(){
@@ -335,340 +429,77 @@ public class ControleMain extends AnchorPane implements Initializable {
 	 */
 	public void iniciaTarefaAutoAtualizar() {
 		if(editores.size() > 0){
-			tarefaAutoAtualizar = new TarefaAutoAtualizar();
-			new  Thread(tarefaAutoAtualizar).start();
+			if(threadAtualizar == null){
+				AutoAtualizar tarefaAutoAtualizar = new AutoAtualizar(editores, checkAuto, util, tempoParaAtualizacao);
+				threadAtualizar = new  Thread(tarefaAutoAtualizar);
+				threadAtualizar.start();
+			}
 		}
-		Stage palco = (Stage) checkAuto.getScene().getWindow();
-		Platform.setImplicitExit(false);
-
+		final Stage palco = (Stage) checkAuto.getScene().getWindow();
 		palco.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				if(tarefaAutoAtualizar.isRunning()){
-					tarefaAutoAtualizar.cancel();
-					Platform.exit();
-					event.consume();
+				if(threadAtualizar.isAlive()){
+					try{
+						checkAuto.setSelected(false);
+						threadAtualizar.interrupt();
+						threadAtualizar = null;
+					}catch(Exception e){
+						System.out.println("Encerrou a theread!");
+					}
 				}
+				palco.close();
 			}
 		});
 	}
 	
-	
-
-	
-	
-	// public class TarefaAtualizarArquivo extends Task<Void>{
-	// @Override
-	// protected Void call() throws Exception {
-	// File file = recuperarArquivo(urlArquivo);
-	// boolean recarregar = false;
-	// if(file != null && file.canExecute()){
-	// Long antes = file.lastModified();
-	// String novoTexto = "";
-	// if(ultimaModficacao != antes && file != null){//Verifica se o arquiv foi
-	// modificado
-	// StringBuilder resultado = new StringBuilder();
-	// try {
-	// int tamanhoArquivo = (int) ( file.length() + 2);//Tamanho do arquivo mais
-	// 2 de memória do StringBuilder
-	// System.out.println("Arquivo: " + tamanhoArquivo);
-	// fr = new FileReader(file);
-	// br = new BufferedReader(fr);
-	// while(br.ready()){
-	// resultado.append(br.readLine() + quebraLinha);
-	// //updateProgress(resultado.length(), tamanhoArquivo);
-	// }
-	// System.out.println("Arquivo: " + resultado.length());
-	// ultimaModficacao = file.lastModified();
-	// StringBuilder arquivoAtual = resultado;
-	// int limite = (arquivoAnterior.toString().length());
-	// if(arquivoAtual.toString().length() >= limite){//Verifica se o que tinha
-	// antes foi alterado
-	// novoTexto = arquivoAtual.substring(0, limite);//Separa só o que tinha
-	// antes no arquivo
-	// if(novoTexto.equals(arquivoAnterior.toString())){//Verifica se o que
-	// tinha antes é igual o que tem agora no arquivo
-	// novoTexto = arquivoAtual.substring(novoTexto.length());//Separa só que
-	// foi modificado depois do que já tinha
-	// recarregar = false;
-	// }else{
-	// recarregar = true;
-	// }
-	// }else{
-	// recarregar = true;
-	// }
-	// if(recarregar){
-	// limpar();
-	// arquivoAnterior = arquivoAtual;
-	// texto.setText(arquivoAtual.toString());
-	// }else{
-	// arquivoAnterior.append(novoTexto);
-	// texto.appendText(novoTexto);
-	// }
-	// }catch(Exception e){
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	// return null;
-	// }
-	//
-	// }
-
-//	class TarefaCarreggarAtualizarArquivo implements Runnable {
-//		public TarefaCarreggarAtualizarArquivo(){
-//			
-//		}
-//		@Override
-//		public void run() {
-//			podeCarregarAtualizar = false;
-//			progresso.setVisible(true);
-//			boolean recarregarArquivo = false;
-//			File file;
-//			try {
-//				file = recuperarArquivo(urlArquivo);
-//				StringBuilder novoArquivo = null;
-//				String novoTexto = "";
-//				if (file != null) {
-//					
-//				}
-//				if (ultimaModficacao != file.lastModified()) {
-//					br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-//					int limiteProcesso = (int) (file.length() + 1);
-//					int tamanhoArquivoAnterior = arquivoAnterior.length();
-//					novoArquivo = new StringBuilder();
-//					while (br.ready()) {
-//						novoArquivo.append(br.readLine() + quebraLinha);
-//						limiteProcesso++;
-//						progresso.setProgress(calcularProgresso(limiteProcesso, novoArquivo.length()));
-//					}
-//					progresso.setProgress(1);
-//					if (novoArquivo.length() >= tamanhoArquivoAnterior) {
-//						novoTexto = novoArquivo.substring(0,
-//								tamanhoArquivoAnterior);
-//						if (novoTexto.equals(arquivoAnterior.toString())) {
-//							novoTexto = novoArquivo.substring(tamanhoArquivoAnterior);
-//						} else {
-//							recarregarArquivo = true;
-//						}
-//					} else {
-//						recarregarArquivo = true;
-//					}
-//					if (recarregarArquivo) {
-//						arquivoAnterior = novoArquivo;
-//						texto.setText(arquivoAnterior.toString());
-//					} else {
-//						arquivoAnterior.append(novoTexto);
-//						texto.appendText(novoTexto);
-//					}
-//					ultimaModficacao = file.lastModified();
-//				}
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			} finally {
-//				progresso.setProgress(0);
-//				progresso.setVisible(false);
-//				try{
-//					br.close();
-//				}catch(Exception e){}
-//				podeCarregarAtualizar = true;
-//			}
-//			
-//			
-//		}
-//		
-//	}
-
-	// public void atualizar() throws Exception{
-	// File file = recuperarArquivo(urlArquivo);
-	// boolean recarregar = false;
-	// if(file != null){
-	// Long antes = file.lastModified();
-	// String novoTexto = "";
-	// if(ultimaModficacao != antes && file != null){//Verifica se o arquiv foi
-	// modificado
-	// StringBuilder resultado = new StringBuilder();
-	// try {
-	// int tamanhoArquivo = (int) ( file.length() + 2);//Tamanho do arquivo mais
-	// 2 de memória do StringBuilder
-	// System.out.println("Arquivo: " + tamanhoArquivo);
-	// fr = new FileReader(file);
-	// br = new BufferedReader(fr);
-	// while(br.ready()){
-	// resultado.append(br.readLine() + quebraLinha);
-	// //updateProgress(resultado.length(), tamanhoArquivo);
-	// }
-	// System.out.println("Arquivo: " + resultado.length());
-	// ultimaModficacao = file.lastModified();
-	// StringBuilder arquivoAtual = resultado;
-	// int limite = (arquivoAnterior.toString().length());
-	// if(arquivoAtual.toString().length() >= limite){//Verifica se o que tinha
-	// antes foi alterado
-	// novoTexto = arquivoAtual.substring(0, limite);//Separa só o que tinha
-	// antes no arquivo
-	// if(novoTexto.equals(arquivoAnterior.toString())){//Verifica se o que
-	// tinha antes é igual o que tem agora no arquivo
-	// novoTexto = arquivoAtual.substring(novoTexto.length());//Separa só que
-	// foi modificado depois do que já tinha
-	// recarregar = false;
-	// }else{
-	// recarregar = true;
-	// }
-	// }else{
-	// recarregar = true;
-	// }
-	// if(recarregar){
-	// limpar();
-	// arquivoAnterior = arquivoAtual;
-	// texto.setText(arquivoAtual.toString());
-	// }else{
-	// arquivoAnterior.append(novoTexto);
-	// texto.appendText(novoTexto);
-	// }
-	// }catch(Exception e){
-	// e.printStackTrace();
-	// }
-	//
-	// }
-	// }
-	// }
-	//
-
-	
-
-//	class TarefaSalvarArquivo extends Task<Void> {
-//		@Override
-//		protected Void call() throws Exception {
-//			podeCarregarAtualizar = false;
-//			progresso.setVisible(true);
-//			File file = recuperarArquivo(urlArquivo);
-//			try {
-//				StringBuilder contadorAux;
-//				arquivoAnterior = new StringBuilder();
-//				arquivoAnterior.append(texto.getText());
-//				
-//				bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
-//				if(arquivoAnterior.toString().contains("\n")){
-//					String[] linhas = arquivoAnterior.toString().split("\n");
-//					StringBuilder auxContador = new StringBuilder();
-//					for (String linha : linhas) {
-//						if(linha.isEmpty()){
-//							auxContador.append(quebraLinha);
-//							bw.write(quebraLinha);
-//						}else{
-//							auxContador.append(linha);
-//							bw.write(linha);
-//						}
-//						progresso.setProgress(calcularProgresso(arquivoAnterior.length(), auxContador.length()));
-//					}
-//				}else{
-//					bw.write(arquivoAnterior.toString());
-//				}
-//				progresso.setProgress(1);
-//			} catch (FileNotFoundException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			} finally {
-//					progresso.setVisible(false);
-//					progresso.setProgress(0);
-//					try{
-//						bw.close();
-//					}catch(Exception e){}
-//					podeCarregarAtualizar = true;
-//			}
-//			return null;
-//		}
-//
-//	}
-
-//	public File recuperarArquivo(String urlArquivo) throws Exception {
-//		File file = null;
-//		if (!urlArquivo.equals("")) {
-//			file = new File(urlArquivo);
-//			if (!file.exists()) {
-//				try {
-//					file.createNewFile();
-//				} catch (IOException e) {
-//					throw new Exception("Erro ao criar arquivo");
-//				}
-//			}
-//		}
-//		return file;
-//	}
-
-	// public class TarefaCarregarArquivo extends Task<Void>{
-	// @Override
-	// protected Void call() throws Exception {
-	// StringBuilder resultado = null;
-	// File file = recuperarArquivo(urlArquivo);
-	// if(file != null && file.canExecute()){
-	// resultado = new StringBuilder();
-	// try {
-	// int tamanhoArquivo = (int) ( file.length() + 2);//Tamanho do arquivo mais
-	// 2 de memória do StringBuilder
-	// System.out.println("Arquivo: " + tamanhoArquivo);
-	// fr = new FileReader(file);
-	// br = new BufferedReader(fr);
-	// while(br.ready()){
-	// resultado.append(br.readLine() + quebraLinha);
-	// updateProgress(resultado.length(), tamanhoArquivo);
-	// }
-	// System.out.println("Arquivo: " + resultado.length());
-	// ultimaModficacao = file.lastModified();
-	// arquivoAnterior = resultado;
-	// texto.setText(resultado.toString());
-	// } catch (FileNotFoundException e) {
-	// e.printStackTrace();
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }finally {
-	// try {
-	// fr.close();
-	// br.close();
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	// return null;
-	// }
-	// }
-
-//	public void configurarProgresso() {
-//		double centroX = (widthX.doubleValue() / 2)	- (progresso.getWidth() / 2);
-//		double centroY = (heightY.doubleValue() / 2)- (progresso.getHeight() / 2);
-//		progresso.setLayoutX(centroX);
-//		progresso.setLayoutY(centroY);
-//	}
-
-//	public class TarefaAutoAtualizar extends Task<Void> {
-//		@Override
-//		protected Void call() throws Exception {
-//			int i = 0;
-//			while (ckAuto.isSelected()) {
-//				System.out.println("Vericação: " + i++);
-//				try {
-//					carregarAtualizarArquivo();
-//					Thread.sleep(tempoParaAtualizacao);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//			return null;
-//		}
-//	}
-
-//	public double calcularProgresso(int total, int atual) {
-//		double resultado = 0;
-//		if (total != 0) {
-//			resultado = BigDecimal
-//					.valueOf(atual)
-//					.divide(BigDecimal.valueOf(total), 2,
-//							RoundingMode.HALF_EVEN).doubleValue();
-//		}
-//		return resultado;
-//	}
+	private void acessarAtalhos(KeyEvent key) throws InterruptedException{
+		if(ctrlNovo.match(key)){
+			novoArquivo();
+		}
+		if(ctrlAbrir.match(key)){
+			abrirArquivo();
+		}
+		if(tabPane.getTabs().size() > 0){
+			if(ctrlSalvar.match(key)){
+				salvarArquivo();
+			}
+			
+			if(ctrlShifttSalvarComo.match(key)){
+				salvarArquivoComo();
+			}
+			
+			if(altFechar.match(key)){
+				fecharTab();
+			}
+			
+			if(ctrlAtualizar.match(key)){
+				atualizarArquivo();
+			}
+			
+			if(ctrlShiftAtualizarTudo.match(key)){
+				AtualizarTodosArquivos();
+			}
+			
+			if(ctrlLimpar.match(key)){
+				limpar();
+			}
+			
+			if(ctrlShiftLimparSalvar.match(key)){
+				limparSalvar();
+			}
+			
+			if(ctrlShiftAltAutoAtualizar.match(key)){
+				if(!checkAuto.isSelected()){
+					checkAuto.setSelected(true);
+					iniciaTarefaAutoAtualizar();
+				}else{
+					checkAuto.setSelected(false);
+				}
+			}
+		}
+		
+	}
 	
 	private void removerEditor(int id){
 		for(int i = 0; i < editores.size();i++){
@@ -703,6 +534,19 @@ public class ControleMain extends AnchorPane implements Initializable {
 		return editor;
 	}
 	
+	private Editor getEditorEmOutraTab(int id, String nome){
+		Editor editor = null;
+		for(int i = 0; i < editores.size();i++){
+			if(editores.get(i).getFile() != null){
+				 if(editores.get(i).getFile().getAbsolutePath().equals(nome) && editores.get(i).getId() != id){
+					 editor = editores.get(i);
+					 break;
+				 }
+			}
+		}
+		return editor;
+	}
+	
 	public Tab getTab(int id){
 		Tab tab = null;
 		for(int i = 0; i < tabPane.getTabs().size(); i++){
@@ -722,48 +566,32 @@ public class ControleMain extends AnchorPane implements Initializable {
 		}
 		return id;
 	}
-	
+	/**
+	 * Abilita as opções do menu apenas se tiver algum editor aberto.
+	 */
 	public void abilitarDesabilitarMenu(){
 		if(tabPane.getTabs().size() > 0){
 			salvar.setDisable(false);
 			salvarComo.setDisable(false);
+			fechar.setDisable(false);
 			atualizar.setDisable(false);
 			atualizarTudo.setDisable(false);
 			limpar.setDisable(false);
 			checkAuto.setDisable(false);
+			limparSalvar.setDisable(false);
 		}else{
 			salvar.setDisable(true);
 			salvarComo.setDisable(true);
+			fechar.setDisable(true);
 			atualizar.setDisable(true);
 			limpar.setDisable(true);
 			checkAuto.setDisable(true);
 			atualizarTudo.setDisable(true);
+			limparSalvar.setDisable(true);
+			contTabs = 0;
 		}
 	}
 	
-	public class TarefaAutoAtualizar extends Task<Void>{
-		private int id;
-		private Editor editor;
-		@Override
-		protected Void call() throws Exception {
-			while(checkAuto.isSelected()){
-				id = getIdTabSelecionado();
-				if(id > 0){
-					editor = getEditorPorId(id);
-					if(editor != null && editor.getFile() != null){
-						if(editor.isPodeCarregarAtualizar()){
-							CarregarAtualizarArquivo atualizar = new CarregarAtualizarArquivo(editor, util);
-							new Thread(atualizar).start();
-							System.out.println("Thread para :" + editor.getFile().getName() + " levantada!");
-						}
-					}
-				}
-				Thread.sleep(tempoParaAtualizacao);
-			}
-			return null;
-		}
-		
-	}
 	
 	public static DoubleProperty heightXProperty() {
 		return heightY;

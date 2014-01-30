@@ -1,17 +1,21 @@
 package model;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
 
-import javax.annotation.processing.Processor;
-
+import javafx.animation.FadeTransition;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
 public class Editor {
 	private int id;
@@ -20,14 +24,16 @@ public class Editor {
 	private boolean podeCarregarAtualizar = true;
 	private Tab tab;
 	private AnchorPane pane;
+	private Pane lightBack;
 	private TextArea texto;
 	private ProgressIndicator progresso;
 	private DoubleProperty largura;
 	private DoubleProperty altura;
 	
-	public Editor(int id, DoubleProperty largura, DoubleProperty altura){
+	public Editor(int id, DoubleProperty largura, DoubleProperty altura) throws InterruptedException{
 		this.pane = new AnchorPane();
 		this.tab = new Tab();
+		this.lightBack = new Pane();
 		tab.setText("novo "+ id);
 		tab.setId(String.valueOf(id));
 		this.id = id;
@@ -36,28 +42,31 @@ public class Editor {
 		progresso.setVisible(false);
 		this.largura = largura;
 		this.altura = altura;
-		pane.getChildren().addAll(texto,progresso);
-		
-		System.out.println("Largura do pane: " + largura.doubleValue() + "       Altura: " + altura.doubleValue());
-		
+		pane.getChildren().addAll(texto, lightBack, progresso);
+		//Configurando o tamanho da área da Tab
 		pane.maxHeightProperty().bind(altura.subtract(62));
 		pane.minHeightProperty().bind(altura.subtract(62));
 		pane.minWidthProperty().bind(largura);
 		pane.maxWidthProperty().bind(largura);
-		
+		//Configurando o tamanho do TextArea
 		texto.maxHeightProperty().bind(pane.maxHeightProperty());
 		texto.minHeightProperty().bind(pane.minHeightProperty());
 		texto.maxWidthProperty().bind(pane.maxWidthProperty());
 		texto.minWidthProperty().bind(pane.minWidthProperty());
-		System.out.println("Largura do texto" + texto.getMinWidth() + "      Altura do texto: " + texto.getMinHeight());
+		texto.setWrapText(true);
+		
+		//Configurando o pane para o lightBack
+		lightBack.maxHeightProperty().bind(pane.maxHeightProperty());
+		lightBack.minHeightProperty().bind(pane.minHeightProperty());
+		lightBack.maxWidthProperty().bind(pane.maxWidthProperty());
+		lightBack.minWidthProperty().bind(pane.minWidthProperty());
+		lightBack.setVisible(false);
 		
 		tab.setContent(pane);
 		
 	}
 	
 	public void centralizarMostrarProgresso(){
-		progresso.setProgress(0);
-		progresso.setVisible(true);
 		double tamanho;
 		if(altura.doubleValue() >= largura.doubleValue()){
 			tamanho = largura.subtract(38).doubleValue();
@@ -71,8 +80,61 @@ public class Editor {
 		progresso.setLayoutY(centroY);
 	}
 	
+	public int getQuantidadeLinhasArquivo() throws Exception{
+		int quantidade = 0;
+		if(file != null && !file.getAbsolutePath().isEmpty()){
+			LineNumberReader linhaLeitura = new LineNumberReader(new FileReader(file));  
+			linhaLeitura.skip(file.length());  
+			quantidade = (linhaLeitura.getLineNumber() +1);  
+		}
+		return quantidade;
+	}
+	
+	public int getTempoAtualizacaoSleep() throws Exception{
+		int tempo = 0;
+		int linhas = 0;
+		linhas = getQuantidadeLinhasArquivo();
+		if(linhas >= 10 && linhas <= 500){
+			tempo =  Math.round(linhas / 10);
+		}else if(linhas > 500 && linhas <= 2000){
+			tempo = Math.round(linhas / 100);
+		}else if(linhas > 2000 && linhas <= 4000){
+			tempo = Math.round(linhas / 80);
+		}else if(linhas > 4000){
+			tempo = Math.round(linhas / 80);
+		}else{
+			tempo = linhas;
+		}
+		return tempo;
+	}
+	
+	public int getQuantidadeLinhasTempo() throws Exception{
+		int tempo = 0;
+		int linhas = 0;
+		linhas = getQuantidadeLinhasArquivo();
+		if(linhas >= 10){
+			tempo =  Math.round(linhas / 10);
+		}else{
+			tempo = linhas;
+		}
+		return tempo;
+	}
+	
+	public void localizarProximo(String pesquisa){
+
+	}
+	public void localizarAnterior(String pesquisa){
+		
+	}
+	
+	public void mostrarProcesso(){
+		progresso.setProgress(0);
+		progresso.setVisible(true);
+		lightBack.setVisible(true);
+	}
 	public void esconderProcesso(){
 		progresso.setVisible(false);
+		lightBack.setVisible(false);
 	}
 	
 	public int getId() {

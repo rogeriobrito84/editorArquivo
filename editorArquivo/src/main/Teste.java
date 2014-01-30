@@ -1,5 +1,11 @@
 package main;
 
+import java.awt.TextField;
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.FileTime;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -23,21 +29,21 @@ public class Teste {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String string = "Rogerio\nrogerio\n";
-		TextArea texto = new TextArea();
 		
-		String[] partes = string.split("[\\n]");
-		
-		for (String p : partes) {
-			System.out.println(p);
-		}
-		
-		
-		
+		TextArea area = new TextArea();
+		File file = new File("");
+		Thread th = new Thread();
 		
 		
 	}
 
+	
+	public static BigDecimal calcularProgressoBig(int total, int atual){
+		BigDecimal resultado = null;
+		resultado = BigDecimal.valueOf(atual).divide(BigDecimal.valueOf(total), 16,RoundingMode.HALF_EVEN);
+		
+		return resultado;
+	}
 
 	
 	private void listarTodos(List<Integer> lista){

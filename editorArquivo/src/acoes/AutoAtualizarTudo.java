@@ -22,12 +22,16 @@ public class AutoAtualizarTudo implements Runnable {
 	public void run() {
 		try {
 			for (Editor editor : editores) {
-				if(editor.getFile() != null  && editor.isPodeCarregarAtualizar()){
-					CarregarAtualizarArquivo atualizar = new CarregarAtualizarArquivo(editor, util);
-					new Thread(atualizar).start();
-					System.out.println("Editor Atualizado: " + editor.getFile().getName());
+				try{
+					if(editor.getFile() != null  && editor.isPodeCarregarAtualizar()){
+						CarregarAtualizarArquivo atualizar = new CarregarAtualizarArquivo(editor, util);
+						new Thread(atualizar).start();
+						System.out.println("Editor Atualizado: " + editor.getFile().getName());
+					}
+					Thread.sleep(1000);
+				}catch(Exception e){
+					editor.esconderProcesso();
 				}
-				Thread.sleep(500);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

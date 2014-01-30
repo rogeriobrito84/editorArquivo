@@ -26,9 +26,10 @@ public class SalvarArquivo implements Runnable {
 	@Override
 	public void run() {
 		editor.setPodeCarregarAtualizar(false);
-		editor.centralizarMostrarProgresso();
 		try {
-			if(editor.getFile() != null && editor.getFile().canWrite()){
+			if(editor.getFile() != null && editor.getFile().canExecute() ){
+				editor.centralizarMostrarProgresso();
+				editor.mostrarProcesso();
 				bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(editor.getFile()), "UTF-8"));
 				tamanhoArquivo = (editor.getTexto().getText().length());
 				if(editor.getTexto().getText().contains("\n")){
@@ -50,6 +51,7 @@ public class SalvarArquivo implements Runnable {
 								bw.write(linha);
 							}
 						}
+						editor.centralizarMostrarProgresso();
 						editor.getProgresso().setProgress(util.calcularProgresso(tamanhoArquivo, contadorAux.length()));
 					}
 					if(contadorAux.length() < tamanhoArquivo){
@@ -61,7 +63,6 @@ public class SalvarArquivo implements Runnable {
 				}else{
 					bw.write(editor.getTexto().getText());
 				}
-				editor.setUltimaModficacao(editor.getFile().lastModified());
 				editor.getProgresso().setProgress(1);
 			}
 		} catch (FileNotFoundException e) {
@@ -75,6 +76,7 @@ public class SalvarArquivo implements Runnable {
 				}
 			}catch(Exception e){}
 			editor.esconderProcesso();
+			editor.setUltimaModficacao(editor.getFile().lastModified());
 			editor.setPodeCarregarAtualizar(true);
 		}
 

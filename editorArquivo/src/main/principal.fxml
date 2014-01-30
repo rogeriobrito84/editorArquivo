@@ -6,7 +6,7 @@
 <?import main.*?>
 
 
-<ControleMain id="panePrinciipal" fx:id="panePrincipal"
+<ControleMain id="panePrincipal" fx:id="panePrincipal"
 	maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="300.0"
 	prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8"
 	xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.ControleMain">
@@ -18,21 +18,22 @@
 					minWidth="60.0" mnemonicParsing="false" text="Arquivo"
 					xmlns:fx="http://javafx.com/fxml">
 					<items>
-						<MenuItem fx:id="Novo" mnemonicParsing="false" text="Novo" />
-						<MenuItem fx:id="abrir" mnemonicParsing="false" text="Abrir" />
-						<MenuItem fx:id="salvar" mnemonicParsing="false" text="Salvar"
+						<MenuItem fx:id="Novo" mnemonicParsing="false" text="Novo --> CTRL + N"/>
+						<MenuItem fx:id="abrir" mnemonicParsing="false" text="Abrir --> CTRL + O" />
+						<MenuItem fx:id="salvar" mnemonicParsing="false" text="Salvar --> CTRL + S"
 							xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
 						<MenuItem fx:id="salvarComo" mnemonicParsing="false"
-							text="Salvar Como" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+							text="Salvar Como --> CTRL + Shift + S" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+							<MenuItem fx:id="fechar" mnemonicParsing="false" text="Fechar --> CTRL + F" />
 					</items>
 				</MenuButton>
 				<MenuButton fx:id="menuAcoes" minHeight="25.0" minWidth="60.0"
 					mnemonicParsing="false" text="Acões" xmlns:fx="http://javafx.com/fxml">
 					<items>
-						<MenuItem fx:id="atualizar" mnemonicParsing="false" text="Atualizar" />
-						<MenuItem fx:id="atualizarTudo" mnemonicParsing="false" text="Atualizar Tudo" />
-						<MenuItem fx:id="limpar" mnemonicParsing="false" text="Limpar" />
-						<MenuItem fx:id="limparSalvar" mnemonicParsing="false" text="Limpar e Salvar" />
+						<MenuItem fx:id="atualizar" mnemonicParsing="false" text="Atualizar --> CTRL + T" />
+						<MenuItem fx:id="atualizarTudo" mnemonicParsing="false" text="Atualizar Tudo --> CTRL + Shift + T" />
+						<MenuItem fx:id="limpar" mnemonicParsing="false" text="Limpar --> CTRL + L" />
+						<MenuItem fx:id="limparSalvar" mnemonicParsing="false" text="Limpar e Salvar --> CTRL + Shift + L" />
 					</items>
 				</MenuButton>
 				<CheckBox fx:id="checkAuto" mnemonicParsing="false"

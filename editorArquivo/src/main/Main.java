@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 
 public class Main extends Application{
@@ -25,7 +24,8 @@ public class Main extends Application{
 				palco.setMinWidth(100);
 				palco.setMinHeight(100);
 				ControleMain pane = (ControleMain) loader.load();
-				Scene cena = new Scene(pane,Color.TRANSPARENT);
+				Scene cena = new Scene(pane,Color.DARKGREY);
+				cena.getStylesheets().add("main/estilo.css");
 				ControleMain.heightXProperty().bind(cena.heightProperty().subtract(0));
 				ControleMain.widthXProperty().bind(cena.widthProperty().subtract(0)); 
 				

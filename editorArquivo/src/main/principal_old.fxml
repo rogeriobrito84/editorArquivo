@@ -29,6 +29,6 @@
 				</Menu>
 			</menus>
 		</MenuBar>
-		<TextArea id="texto" fx:id="texto" editable="false" layoutY="24.0" prefHeight="376.0" prefWidth="600.0" />
+		<TextArea id="texto" fx:id="texto" editable="false" layoutY="24.0" prefHeight="376.0" prefWidth="600.0" style="-fx-background-color: blue;" text="oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" wrapText="true" /><Pane layoutX="183.0" layoutY="123.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" />
 	</children>
 </AnchorPane>
