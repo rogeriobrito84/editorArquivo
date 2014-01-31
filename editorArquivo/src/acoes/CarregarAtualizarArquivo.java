@@ -39,7 +39,6 @@ public class CarregarAtualizarArquivo implements Runnable {
 					limiteProcesso = (int) editor.getFile().length();
 					quantidadeLinhas =0;
 					quantidadeCaracteresTexto = 0;
-					editor.getTexto().clear();
 					br = new BufferedReader(new InputStreamReader(new FileInputStream(editor.getFile()), "UTF-8"));
 					while (br.ready()) {
 						quantidadeLinhas++;
@@ -56,34 +55,38 @@ public class CarregarAtualizarArquivo implements Runnable {
 							editor.centralizarMostrarProgresso();
 							quantidadeCaracteresTexto += novoArquivo.length();
 							editor.getProgresso().setProgress(util.calcularProgresso(limiteProcesso, quantidadeCaracteresTexto));
-							editor.getTexto().appendText(novoArquivo.toString());
+							//editor.getTexto().appendText(novoArquivo.toString());
 							quantidadeLinhas = 0;
-							novoArquivo = new StringBuilder();
+							//novoArquivo = new StringBuilder();
 							Thread.sleep(tempoSleep);
 						}
 					}
-					editor.getTexto().appendText(novoArquivo.toString());
+					
+					editor.getTexto().setText(novoArquivo.toString());
 					editor.getProgresso().setProgress(1);
 					editor.setUltimaModficacao(editor.getFile().lastModified());
 					//Após passar de 4000 linhas o TextArea perde o foco.
 					int numeroLinhas = editor.getQuantidadeLinhasArquivo();
-					if(numeroLinhas > 1000){
+					if(editor.getQuantidadeLinhasArquivo() > 5000){
 						numeroLinhas = Math.round(numeroLinhas/ 1000);
 							for(int i = 0; i < numeroLinhas;i++){
 								editor.getTexto().appendText(util.getQuebralinha());
+								if(numeroLinhas == 6){break;}
+								if(i > 8){break;}
 							}
 					}
 					
 				}
 			}
 		} catch (Exception e) {
+			System.out.println("Estourou no Carregar!");
 			editor.esconderProcesso();
 		} finally {
 			if(br != null){
 				try {
 					br.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					System.out.println("Estourou no Carregar!");
 					e.printStackTrace();
 				}
 			}

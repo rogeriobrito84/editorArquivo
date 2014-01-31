@@ -22,6 +22,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
@@ -67,6 +68,8 @@ public class ControleMain extends AnchorPane implements Initializable {
 	private MenuItem limpar;
 	@FXML
 	private MenuItem limparSalvar;
+	@FXML
+	private TextField textoPesquisa;
 	@FXML
 	private CheckBox checkAuto;
 	
@@ -390,8 +393,10 @@ public class ControleMain extends AnchorPane implements Initializable {
 		if(id > 0){
 			editor = getEditorPorId(id);
 			if(editor != null && editor.getFile() != null && editor.isPodeCarregarAtualizar()){
+				try{
 				CarregarAtualizarArquivo atualizar = new CarregarAtualizarArquivo(editor, util);
 				new Thread(atualizar).start();
+				}catch(Exception e){}
 			}
 		}
 	}
@@ -430,7 +435,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 	public void iniciaTarefaAutoAtualizar() {
 		if(editores.size() > 0){
 			if(threadAtualizar == null){
-				AutoAtualizar tarefaAutoAtualizar = new AutoAtualizar(editores, checkAuto, util, tempoParaAtualizacao);
+				AutoAtualizar tarefaAutoAtualizar = new AutoAtualizar(editores, checkAuto, util, tabPane, tempoParaAtualizacao);
 				threadAtualizar = new  Thread(tarefaAutoAtualizar);
 				threadAtualizar.start();
 			}
@@ -439,16 +444,14 @@ public class ControleMain extends AnchorPane implements Initializable {
 		palco.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				if(threadAtualizar.isAlive()){
-					try{
-						checkAuto.setSelected(false);
-						threadAtualizar.interrupt();
-						threadAtualizar = null;
-					}catch(Exception e){
-						System.out.println("Encerrou a theread!");
+				try{
+					if(threadAtualizar.isAlive()){
+							checkAuto.setSelected(false);
+							threadAtualizar.interrupt();
+							threadAtualizar = null;
 					}
-				}
 				palco.close();
+				}catch(Exception e){}
 			}
 		});
 	}

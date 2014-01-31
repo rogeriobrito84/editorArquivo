@@ -34,14 +34,15 @@ public class Editor {
 		this.pane = new AnchorPane();
 		this.tab = new Tab();
 		this.lightBack = new Pane();
-		tab.setText("novo "+ id);
-		tab.setId(String.valueOf(id));
-		this.id = id;
-		this.texto = new TextArea();
-		this.progresso = new ProgressIndicator(0);
-		progresso.setVisible(false);
 		this.largura = largura;
 		this.altura = altura;
+		this.texto = new TextArea();
+		this.id = id;
+		this.progresso = new ProgressIndicator(0);
+		progresso.setVisible(false);
+		progresso.setStyle("-fx-text-background-color: white;-fx-font-size: 20;");
+		tab.setText("novo "+ id);
+		tab.setId(String.valueOf(id));
 		pane.getChildren().addAll(texto, lightBack, progresso);
 		//Configurando o tamanho da área da Tab
 		pane.maxHeightProperty().bind(altura.subtract(62));
@@ -69,9 +70,9 @@ public class Editor {
 	public void centralizarMostrarProgresso(){
 		double tamanho;
 		if(altura.doubleValue() >= largura.doubleValue()){
-			tamanho = largura.subtract(38).doubleValue();
+			tamanho = largura.subtract(58).doubleValue();
 		}else{
-			tamanho = altura.subtract(100).doubleValue();
+			tamanho = altura.subtract(120).doubleValue();
 		}
 		progresso.setPrefSize(tamanho, tamanho);
 		double centroX = (largura.doubleValue() / 2)	- (progresso.getWidth() / 2);
@@ -94,17 +95,18 @@ public class Editor {
 		int tempo = 0;
 		int linhas = 0;
 		linhas = getQuantidadeLinhasArquivo();
-		if(linhas >= 10 && linhas <= 500){
+		if(linhas >= 10 && linhas <= 100){
 			tempo =  Math.round(linhas / 10);
-		}else if(linhas > 500 && linhas <= 2000){
+		}else if(linhas > 100 && linhas <= 1000){
+			tempo = Math.round(linhas / 50);
+		}else if(linhas > 1000 && linhas <= 4000){
 			tempo = Math.round(linhas / 100);
-		}else if(linhas > 2000 && linhas <= 4000){
-			tempo = Math.round(linhas / 80);
 		}else if(linhas > 4000){
-			tempo = Math.round(linhas / 80);
+			tempo = Math.round(linhas / 500);
 		}else{
 			tempo = linhas;
 		}
+		System.out.println(tempo);
 		return tempo;
 	}
 	
@@ -112,8 +114,12 @@ public class Editor {
 		int tempo = 0;
 		int linhas = 0;
 		linhas = getQuantidadeLinhasArquivo();
-		if(linhas >= 10){
+		if(linhas >= 10 && linhas < 100){
 			tempo =  Math.round(linhas / 10);
+		}else if(linhas > 100 && linhas <= 10000){
+			tempo =  Math.round(linhas / 100);
+		}else if(linhas > 10000){
+			tempo = Math.round(linhas / 100);
 		}else{
 			tempo = linhas;
 		}

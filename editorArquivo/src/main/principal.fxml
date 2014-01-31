@@ -4,6 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import main.*?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 
 
 <ControleMain id="panePrincipal" fx:id="panePrincipal"
@@ -11,10 +13,10 @@
 	prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8"
 	xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.ControleMain">
 	<children>
-		<ToolBar fx:id="menu" minHeight="35.0" minWidth="300.0"
+		<ToolBar id="menu" fx:id="menu" minHeight="35.0" minWidth="300.0"
 			prefHeight="35.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
 			<items>
-				<MenuButton fx:id="menuArquivo" minHeight="25.0"
+				<MenuButton id="botaoMenu" fx:id="menuArquivo" minHeight="25.0"
 					minWidth="60.0" mnemonicParsing="false" text="Arquivo"
 					xmlns:fx="http://javafx.com/fxml">
 					<items>
@@ -27,7 +29,7 @@
 							<MenuItem fx:id="fechar" mnemonicParsing="false" text="Fechar --> CTRL + F" />
 					</items>
 				</MenuButton>
-				<MenuButton fx:id="menuAcoes" minHeight="25.0" minWidth="60.0"
+				<MenuButton id="botaoMenu" fx:id="menuAcoes" minHeight="25.0" minWidth="60.0"
 					mnemonicParsing="false" text="Acões" xmlns:fx="http://javafx.com/fxml">
 					<items>
 						<MenuItem fx:id="atualizar" mnemonicParsing="false" text="Atualizar --> CTRL + T" />
@@ -36,6 +38,7 @@
 						<MenuItem fx:id="limparSalvar" mnemonicParsing="false" text="Limpar e Salvar --> CTRL + Shift + L" />
 					</items>
 				</MenuButton>
+				<TextField  id="textoPesquisa" fx:id="textoPesquisa" promptText="Pesquisar" />
 				<CheckBox fx:id="checkAuto" mnemonicParsing="false"
 					text="Auto Atualizar" />
 			</items>

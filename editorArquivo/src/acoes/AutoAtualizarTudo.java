@@ -13,6 +13,7 @@ public class AutoAtualizarTudo implements Runnable {
 	private List<Editor> editores;
 	private Util util;
 	
+	
 	public AutoAtualizarTudo(List<Editor> editores, Util util){
 		this.editores = editores;
 		this.util = util;
