@@ -29,6 +29,7 @@ public class Editor {
 	private ProgressIndicator progresso;
 	private DoubleProperty largura;
 	private DoubleProperty altura;
+	private int ultimaPosicaoCursor;
 	
 	public Editor(int id, DoubleProperty largura, DoubleProperty altura) throws InterruptedException{
 		this.pane = new AnchorPane();
@@ -55,6 +56,7 @@ public class Editor {
 		texto.maxWidthProperty().bind(pane.maxWidthProperty());
 		texto.minWidthProperty().bind(pane.minWidthProperty());
 		texto.setWrapText(true);
+		
 		
 		//Configurando o pane para o lightBack
 		lightBack.maxHeightProperty().bind(pane.maxHeightProperty());
@@ -100,9 +102,15 @@ public class Editor {
 		}else if(linhas > 100 && linhas <= 1000){
 			tempo = Math.round(linhas / 50);
 		}else if(linhas > 1000 && linhas <= 4000){
-			tempo = Math.round(linhas / 100);
-		}else if(linhas > 4000){
 			tempo = Math.round(linhas / 500);
+		}else if(linhas > 4000 && linhas <= 10000){
+			tempo = Math.round(linhas / 500);
+		}else if(linhas > 10000 && linhas <= 20000){
+			tempo = Math.round(linhas / 1000);
+		}else if(linhas > 20000 && linhas <= 50000){
+			tempo = Math.round(linhas / 1000);
+		}else if(linhas > 50000){
+			tempo = Math.round(linhas / 1500);
 		}else{
 			tempo = linhas;
 		}
@@ -126,11 +134,48 @@ public class Editor {
 		return tempo;
 	}
 	
-	public void localizarProximo(String pesquisa){
-
+	public boolean localizarAnterior(String pesquisa){
+		boolean localizou = true;
+		if(texto.getSelection().getEnd() == ultimaPosicaoCursor){
+			texto.positionCaret(texto.getSelection().getStart()); 
+		}
+		int posicaoTexto = texto.getText(0, texto.getAnchor()).lastIndexOf(pesquisa);
+		if(posicaoTexto > -1){
+			texto.positionCaret(posicaoTexto);
+            texto.selectNextWord();
+            ultimaPosicaoCursor = (posicaoTexto + texto.getSelectedText().length());
+		}else{
+			if(texto.getText().contains(pesquisa)){
+				ultimaPosicaoCursor = 0;
+				texto.positionCaret(texto.getText().length()-1);
+				localizarAnterior(pesquisa);
+			}else{
+				localizou = false;
+			}
+		}
+		return localizou;
 	}
-	public void localizarAnterior(String pesquisa){
-		
+	
+	public boolean localizarProximo(String pesquisa){
+		boolean localizou = true;
+		if(texto.getSelection().getEnd() == ultimaPosicaoCursor){
+			texto.positionCaret(ultimaPosicaoCursor);
+		}
+		int posicaoTexto = texto.getText().indexOf(pesquisa, texto.getAnchor());
+		if(posicaoTexto > -1){
+			texto.positionCaret(posicaoTexto);
+            texto.selectNextWord();
+            ultimaPosicaoCursor = (posicaoTexto + texto.getSelectedText().length());
+		}else{
+			if(texto.getText().contains(pesquisa)){
+				texto.positionCaret(0);
+				ultimaPosicaoCursor = 0;
+				localizarProximo(pesquisa);
+			}else{
+				localizou = false;
+			}
+		}
+		return localizou;
 	}
 	
 	public void mostrarProcesso(){

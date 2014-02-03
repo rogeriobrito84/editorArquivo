@@ -6,6 +6,7 @@
 <?import main.*?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
 
 
 <ControleMain id="panePrincipal" fx:id="panePrincipal"
@@ -39,6 +40,8 @@
 					</items>
 				</MenuButton>
 				<TextField  id="textoPesquisa" fx:id="textoPesquisa" promptText="Pesquisar" />
+				<Button id="btnAnterior"  fx:id="btnAnterior" text="Anterior" minHeight="25.0" minWidth="60.0" />
+				<Button id="btnProximo"  fx:id="btnProximo" text="Próximo"  minHeight="25.0" minWidth="60.0"/>
 				<CheckBox fx:id="checkAuto" mnemonicParsing="false"
 					text="Auto Atualizar" />
 			</items>

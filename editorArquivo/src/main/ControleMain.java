@@ -7,15 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -71,6 +70,10 @@ public class ControleMain extends AnchorPane implements Initializable {
 	@FXML
 	private TextField textoPesquisa;
 	@FXML
+	private Button btnAnterior;
+	@FXML
+	private Button btnProximo;
+	@FXML
 	private CheckBox checkAuto;
 	
 	
@@ -112,7 +115,6 @@ public class ControleMain extends AnchorPane implements Initializable {
 				try {
 					novoArquivo();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -190,6 +192,29 @@ public class ControleMain extends AnchorPane implements Initializable {
 				limparSalvar();
 			}
 		});
+		
+		textoPesquisa.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+				abilitarPesquisa();
+			}
+		});
+		
+		btnAnterior.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(!anterior(textoPesquisa.getText())){
+					textoPesquisa.setStyle("-fx-text-fill: white;fx-background-color:red;");
+				}
+			}
+		});
+		
+		btnProximo.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				proximo(textoPesquisa.getText());
+			}
+		});
 
 		checkAuto.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -210,6 +235,21 @@ public class ControleMain extends AnchorPane implements Initializable {
 				}
 			}
 		});
+		
+		//Capturar eventos do teclado
+		panePrincipal.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				try {
+					acessarAtalhos(event);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		
 		checkAuto.setTooltip(new Tooltip("CTRL + SHIFT + ALT + T"));
 		
 		
@@ -227,19 +267,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 		tabPane.maxWidthProperty().bind(widthX);
 		tabPane.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 		
-		//Capturar eventos do teclado
-		panePrincipal.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent event) {
-				try {
-					acessarAtalhos(event);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-			}
-		});
+		
 		
 		// Setando o tamanho do menu
 		menu.minWidthProperty().bind(widthX);
@@ -428,6 +456,26 @@ public class ControleMain extends AnchorPane implements Initializable {
 		}
 	}
 	
+	public boolean proximo(String pesquisa){
+		boolean localizou = false;
+		int id = getIdTabSelecionado();
+		if(id > 0){
+			Editor editor = getEditorPorId(id);
+			localizou =  editor.localizarProximo(pesquisa);
+		}
+		return localizou;
+	}
+	
+	public boolean anterior(String pesquisa){
+		boolean localizou = false;
+		int id = getIdTabSelecionado();
+		if(id > 0){
+			Editor editor = getEditorPorId(id);
+			localizou = editor.localizarAnterior(pesquisa);
+		}
+		return localizou;
+	}
+	
 
 	/**
 	 * Função que cria uma tarefa para ficar atualizando o arquivo
@@ -593,8 +641,19 @@ public class ControleMain extends AnchorPane implements Initializable {
 			limparSalvar.setDisable(true);
 			contTabs = 0;
 		}
+		abilitarPesquisa();
 	}
 	
+	public void abilitarPesquisa(){
+		if(textoPesquisa.getText().isEmpty()){
+			btnAnterior.setDisable(true);
+			btnProximo.setDisable(true);
+		}else{
+			btnAnterior.setDisable(false);
+			btnProximo.setDisable(false);
+		}
+		textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
+	}
 	
 	public static DoubleProperty heightXProperty() {
 		return heightY;

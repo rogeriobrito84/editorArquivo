@@ -1,26 +1,12 @@
 package main;
 
-import java.awt.TextField;
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.FileTime;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
-import model.Editor;
-
-import uitl.Dialog;
-import uitl.Util;
 
 import javafx.application.Application;
-import javafx.beans.InvalidationListener;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class Teste {
@@ -29,12 +15,8 @@ public class Teste {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
-		TextArea area = new TextArea();
-		File file = new File("");
-		Thread th = new Thread();
-		
-		
+		String texto = " tudo mais demais tudo mas demais tudo";
+//		texto.
 	}
 
 	
@@ -46,19 +28,36 @@ public class Teste {
 	}
 
 	
-	private void listarTodos(List<Integer> lista){
-		for (int i = 0; i < lista.size();i++){
-			System.out.println("Nome: " + lista.get(i)+ "            index: " + i);
-			System.out.println("--------------------------------------------- ");
-		}
-	}
-	
-	private void remover(List<Integer> lista, int index){
-		for(int i = 0; i < lista.size();i++){
-			if(lista.get(i) == index){
-				lista.remove(lista.get(i));
-				break;
-			}
-		}
-	}
+
+
+//	@Override
+//	public void start(Stage palco) throws Exception {
+//		palco.setHeight(300);
+//		palco.setWidth(400);
+//		AnchorPane pane = new AnchorPane();
+//		Scene cena = new Scene(pane);
+//		
+//		TextArea texto = new TextArea();
+//		texto.minHeightProperty().bind(cena.heightProperty());
+//		texto.minWidthProperty().bind(cena.widthProperty());
+//		pane.getChildren().add(texto);
+//		
+//		palco.setScene(cena);
+//		palco.show();
+//		Thread.sleep(3000);
+//		carregarTexto(texto);
+//		
+//	}
+//	
+//	public void carregarTexto(TextArea area){
+//		System.out.println("Inicializando carregamento StringBuilder --------------");
+//		StringBuilder arquivo = new StringBuilder();
+//		for(int i = 0; i < 40000;i++){
+//			arquivo.append(i + " hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh\n");
+//		}
+//		System.out.println("Texto carregado no StringBuilder --------------");
+//		System.out.println("Inicializando carregamento no TextArea --------------");
+//		area.setText(arquivo.toString());
+//		System.out.println("Texto carregado no TextArea --------------");
+//	}
 }
