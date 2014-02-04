@@ -9,6 +9,10 @@ import java.util.ResourceBundle;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -16,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
@@ -73,6 +78,8 @@ public class ControleMain extends AnchorPane implements Initializable {
 	private Button btnAnterior;
 	@FXML
 	private Button btnProximo;
+	@FXML 
+	private ComboBox<String> fonteCombo;
 	@FXML
 	private CheckBox checkAuto;
 	
@@ -193,18 +200,39 @@ public class ControleMain extends AnchorPane implements Initializable {
 			}
 		});
 		
-		textoPesquisa.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<Event>() {
+		textoPesquisa.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 			@Override
-			public void handle(Event event) {
+			public void handle(KeyEvent event) {
 				abilitarPesquisa();
+				if(event.getCode() == KeyCode.ENTER){
+					if(proximo(textoPesquisa.getText())){
+						textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
+					}else{
+						textoPesquisa.setStyle("-fx-text-fill: white;" +
+								"-fx-background-color: linear-gradient(#ff5400, #be1d00);");
+					}
+				}
 			}
 		});
+		
+		textoPesquisa.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable,
+					String TextoAntigo, String TextNovo) {
+				 aumentarTextoPesquisa(TextNovo);
+			}
+		});
+		
+		
 		
 		btnAnterior.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if(!anterior(textoPesquisa.getText())){
-					textoPesquisa.setStyle("-fx-text-fill: white;fx-background-color:red;");
+				if(anterior(textoPesquisa.getText())){
+					textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
+				}else{
+					textoPesquisa.setStyle("-fx-text-fill: white;" +
+							"-fx-background-color: linear-gradient(#ff5400, #be1d00);");
 				}
 			}
 		});
@@ -212,10 +240,24 @@ public class ControleMain extends AnchorPane implements Initializable {
 		btnProximo.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				proximo(textoPesquisa.getText());
+				if(proximo(textoPesquisa.getText())){
+					textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
+				}else{
+					textoPesquisa.setStyle("-fx-text-fill: white;" +
+							"-fx-background-color: linear-gradient(#ff5400, #be1d00);");
+				}
 			}
 		});
-
+		
+		fonteCombo.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable,
+					String antigoTamanho, String novoTamnanho) {
+				System.out.println("Tamanho: " + novoTamnanho);
+				mudarTamanhoFonte(novoTamnanho);
+			}
+		});
+		
 		checkAuto.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -243,14 +285,14 @@ public class ControleMain extends AnchorPane implements Initializable {
 				try {
 					acessarAtalhos(event);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
 			}
 		});
 		
-		checkAuto.setTooltip(new Tooltip("CTRL + SHIFT + ALT + T"));
+		checkAuto.setTooltip(new Tooltip("Auto Atualizar --> CTRL + SHIFT + ALT + T"));
+		
 		
 		
 		//Inicializando os editores
@@ -272,6 +314,16 @@ public class ControleMain extends AnchorPane implements Initializable {
 		// Setando o tamanho do menu
 		menu.minWidthProperty().bind(widthX);
 		menu.maxWidthProperty().bind(widthX);
+		//Setando texto dos Butões próximo e anterior
+		btnAnterior.setText("<");
+		btnProximo.setText(">");
+		//Setando o combobox do tamanho da fonte
+//		ObservableList<String> tamnanhosFonte = FXCollections.observableArrayList(
+//			"10","12","14","16","18","20","24","28","32"
+//		);
+//		fonteCombo.setItems(tamnanhosFonte);
+		
+		
 		
 		//Inicializando as teclas de atalho
 		ctrlNovo = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
@@ -311,7 +363,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 	public Editor novoArquivo() throws InterruptedException{
 		contTabs++;
 		Tab tab;
-		Editor editor = new Editor(contTabs, widthX, heightY); 
+		Editor editor = new Editor(contTabs, widthX, heightY, fonteCombo.getSelectionModel().getSelectedItem()); 
 		tabPane.getTabs().add(editor.getTab());
 		editores.add(editor);
 		editor.getTab().setOnClosed(new EventHandler<Event>() {
@@ -504,6 +556,28 @@ public class ControleMain extends AnchorPane implements Initializable {
 		});
 	}
 	
+	private void aumentarTextoPesquisa(String TextoNovo) {
+		double larguraMin = 120;
+		 double larguraAtual = textoPesquisa.getPrefWidth();
+		 double LarguraNova = (TextoNovo.length() * 9);
+		 double larguraMax = (tabPane.getWidth() - 390);
+		 System.out.println("Scala: " + larguraAtual+ "Ltotal: " + tabPane.getWidth()+ "texto: " + TextoNovo.length());
+		 if(LarguraNova >= larguraAtual && LarguraNova <= larguraMax){
+			 textoPesquisa.setPrefWidth(LarguraNova);
+		 }else if(LarguraNova <= larguraAtual && larguraAtual > larguraMin){
+			 textoPesquisa.setPrefWidth(LarguraNova);
+		 }else if(LarguraNova > larguraMax){
+			 textoPesquisa.setPrefWidth(larguraMax);
+		 }
+	}
+	
+	public void mudarTamanhoFonte(String tamanho){
+		for (Editor e : editores) {
+			e.getTexto().setStyle("-fx-font-size: " + tamanho + ";");
+		}
+	}
+	
+	
 	private void acessarAtalhos(KeyEvent key) throws InterruptedException{
 		if(ctrlNovo.match(key)){
 			novoArquivo();
@@ -628,6 +702,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 			atualizar.setDisable(false);
 			atualizarTudo.setDisable(false);
 			limpar.setDisable(false);
+			textoPesquisa.setDisable(false);
 			checkAuto.setDisable(false);
 			limparSalvar.setDisable(false);
 		}else{
@@ -636,6 +711,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 			fechar.setDisable(true);
 			atualizar.setDisable(true);
 			limpar.setDisable(true);
+			textoPesquisa.setDisable(true);
 			checkAuto.setDisable(true);
 			atualizarTudo.setDisable(true);
 			limparSalvar.setDisable(true);

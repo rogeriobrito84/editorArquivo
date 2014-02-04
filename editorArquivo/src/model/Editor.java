@@ -31,7 +31,7 @@ public class Editor {
 	private DoubleProperty altura;
 	private int ultimaPosicaoCursor;
 	
-	public Editor(int id, DoubleProperty largura, DoubleProperty altura) throws InterruptedException{
+	public Editor(int id, DoubleProperty largura, DoubleProperty altura, String tamanhoFonte) throws InterruptedException{
 		this.pane = new AnchorPane();
 		this.tab = new Tab();
 		this.lightBack = new Pane();
@@ -55,7 +55,9 @@ public class Editor {
 		texto.minHeightProperty().bind(pane.minHeightProperty());
 		texto.maxWidthProperty().bind(pane.maxWidthProperty());
 		texto.minWidthProperty().bind(pane.minWidthProperty());
+		texto.setStyle("-fx-font-size: " + tamanhoFonte + ";");
 		texto.setWrapText(true);
+		
 		
 		
 		//Configurando o pane para o lightBack
@@ -104,7 +106,7 @@ public class Editor {
 		}else if(linhas > 1000 && linhas <= 4000){
 			tempo = Math.round(linhas / 500);
 		}else if(linhas > 4000 && linhas <= 10000){
-			tempo = Math.round(linhas / 500);
+			tempo = Math.round(linhas / 400);
 		}else if(linhas > 10000 && linhas <= 20000){
 			tempo = Math.round(linhas / 1000);
 		}else if(linhas > 20000 && linhas <= 50000){
@@ -142,12 +144,11 @@ public class Editor {
 		int posicaoTexto = texto.getText(0, texto.getAnchor()).lastIndexOf(pesquisa);
 		if(posicaoTexto > -1){
 			texto.positionCaret(posicaoTexto);
-            texto.selectNextWord();
+			texto.selectRange(posicaoTexto, (posicaoTexto+pesquisa.length()));
             ultimaPosicaoCursor = (posicaoTexto + texto.getSelectedText().length());
 		}else{
 			if(texto.getText().contains(pesquisa)){
-				ultimaPosicaoCursor = 0;
-				texto.positionCaret(texto.getText().length()-1);
+				texto.end();
 				localizarAnterior(pesquisa);
 			}else{
 				localizou = false;
@@ -164,7 +165,7 @@ public class Editor {
 		int posicaoTexto = texto.getText().indexOf(pesquisa, texto.getAnchor());
 		if(posicaoTexto > -1){
 			texto.positionCaret(posicaoTexto);
-            texto.selectNextWord();
+            texto.selectRange(posicaoTexto, (posicaoTexto+pesquisa.length()));
             ultimaPosicaoCursor = (posicaoTexto + texto.getSelectedText().length());
 		}else{
 			if(texto.getText().contains(pesquisa)){
@@ -177,6 +178,7 @@ public class Editor {
 		}
 		return localizou;
 	}
+	
 	
 	public void mostrarProcesso(){
 		progresso.setProgress(0);

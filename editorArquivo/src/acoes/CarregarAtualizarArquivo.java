@@ -62,24 +62,10 @@ public class CarregarAtualizarArquivo implements Runnable {
 							Thread.sleep(tempoSleep);
 						}
 					}
-					
 					editor.getTexto().setText(novoArquivo.toString());
+					editor.getTexto().setPrefColumnCount(editor.getQuantidadeLinhasArquivo());
 					editor.setUltimaModficacao(editor.getFile().lastModified());
 					editor.getProgresso().setProgress(1);
-					//Após passar de 5000 linhas o TextArea perde o foco, por isso é acrescentado mais quebras de linhas.
-					int numeroLinhas = editor.getQuantidadeLinhasArquivo();
-					if(editor.getQuantidadeLinhasArquivo() > 5000){
-						numeroLinhas = Math.round(numeroLinhas/ 1000);
-						String quebrasLinhas = "";	
-							for(int i = 0; i < numeroLinhas;i++){
-								quebrasLinhas += util.getQuebralinha();
-								if(numeroLinhas == 6){break;}
-								if(i > 8){break;}
-							}
-							editor.getTexto().appendText(quebrasLinhas);
-					}else{
-						editor.getTexto().positionCaret(editor.getTexto().getText().length() -1);
-					}
 				}
 			}
 		} catch (Exception e) {

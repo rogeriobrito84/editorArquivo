@@ -1,34 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import javafx.collections.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane id="panePrinciipal" fx:id="panePrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.ControleMain">
-	<children>
-		<MenuBar fx:id="menu" prefHeight="24.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
-			<menus>
-				<Menu mnemonicParsing="false" text="Arquivo">
-					<items>
-						<MenuItem fx:id="itemNovo" mnemonicParsing="false" text="Novo" />
-					</items>
-				</Menu>
-				<Menu mnemonicParsing="false" text="Ações" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-					<items>
-						<MenuItem fx:id="carregar" mnemonicParsing="false" text="Carregar" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
-						<MenuItem fx:id="limparCarregar" mnemonicParsing="false" text="Limpar e Carregar" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
-						<MenuItem fx:id="limpar" mnemonicParsing="false" text="Limpar" />
-						<MenuItem fx:id="salvar" mnemonicParsing="false" text="Salvar" />
-					</items>
-				</Menu>
-				<Menu mnemonicParsing="false" text="Fonte" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-					<items>
-						<MenuItem fx:id="aumentarFonte" mnemonicParsing="false" text="Aumentar" />
-						<MenuItem fx:id="diminuirFonte" mnemonicParsing="false" text="Dimunir" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
-					</items>
-				</Menu>
-			</menus>
-		</MenuBar>
-		<TextArea id="texto" fx:id="texto" editable="false" layoutY="24.0" prefHeight="376.0" prefWidth="600.0" style="-fx-background-color: blue;" text="oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" wrapText="true" /><Pane layoutX="183.0" layoutY="123.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" />
-	</children>
-</AnchorPane>
+<children><ComboBox layoutX="93.873291015625" layoutY="123.5" visibleRowCount="5" xmlns:fx="http://javafx.com/fxml">
+  <items>
+    <FXCollections fx:factory="observableArrayList">
+      <String fx:value="Item 1" />
+      <String fx:value="Item 2" />
+      <String fx:value="Item 3" />
+    </FXCollections>
+  </items>
+</ComboBox>
+</children></AnchorPane>

@@ -19,10 +19,10 @@ public class Main extends Application{
 	public void start(Stage palco) throws Exception {
 			FXMLLoader loader = new FXMLLoader(ControleMain.class.getResource("principal.fxml"));
 			try {
-				//palco = new Stage(StageStyle.TRANSPARENT);
+				//palco = new Stag'e(StageStyle.TRANSPARENT);
 				
-				palco.setMinWidth(100);
-				palco.setMinHeight(100);
+				palco.setMinWidth(200);
+				palco.setMinHeight(200);
 				ControleMain pane = (ControleMain) loader.load();
 				Scene cena = new Scene(pane,Color.DARKGREY);
 				cena.getStylesheets().add("main/estilo.css");

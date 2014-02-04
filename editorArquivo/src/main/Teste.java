@@ -3,11 +3,8 @@ package main;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
+import javafx.collections.ObservableList;
+import javafx.scene.control.MenuButton;
 
 public class Teste {
 
@@ -16,7 +13,9 @@ public class Teste {
 	 */
 	public static void main(String[] args) {
 		String texto = " tudo mais demais tudo mas demais tudo";
-//		texto.
+		MenuButton btn = new MenuButton();
+//		ObservableList<E>
+	
 	}
 
 	
