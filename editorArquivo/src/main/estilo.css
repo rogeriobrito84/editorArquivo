@@ -17,9 +17,26 @@ AnchorPane{
     
 }
 
-.toolBar{
+.menu-button{
+	
+}
+
+.label{
 	-fx-text-fill: white;
 }
+
+.list-cell{
+	-fx-text-fill: white;
+}
+
+.check-box{
+	-fx-text-fill: white;
+}
+
+.button{
+	-fx-text-fill: white;
+}
+
 
 #botaoMenu{
    -fx-background-color:
@@ -28,6 +45,7 @@ AnchorPane{
         linear-gradient(#395cab, #223768);
     -fx-text-fill: white;
     -fx-font-size: 12;
+    
 }
 
 

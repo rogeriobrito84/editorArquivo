@@ -22,7 +22,7 @@
 		<ToolBar id="menu" fx:id="menu" minHeight="35.0" minWidth="300.0" 
 			prefHeight="35.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
 			<items>
-				<MenuButton styleClass="toolBar" id="botaoMenu" fx:id="menuArquivo" minHeight="23.0"
+				<MenuButton  id="botaoMenu" fx:id="menuArquivo" minHeight="23.0"
 					minWidth="60.0" mnemonicParsing="false" text="Arquivo"
 					xmlns:fx="http://javafx.com/fxml">
 					<items>
