@@ -38,6 +38,21 @@ AnchorPane{
 }
 
 
+
+.indexed-cell:hover{
+	 -fx-background-color:
+        #000000,
+        linear-gradient(#7ebcea, #2f4f8f),
+        linear-gradient(#395cab, #223768);
+}
+
+.menu-item:hover{
+	 -fx-background-color:
+        #000000,
+        linear-gradient(#7ebcea, #2f4f8f),
+        linear-gradient(#395cab, #223768);
+}
+
 #botaoMenu{
    -fx-background-color:
         #000000,
