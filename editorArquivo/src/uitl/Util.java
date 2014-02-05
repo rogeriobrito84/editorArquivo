@@ -1,18 +1,31 @@
 package uitl;
 
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
-import model.Editor;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import model.Editor;
 
 public class Util {
 	private static final String quebraLinha = System.getProperty("line.separator");
 	private File file;
-	FileChooser chooser;
+	private FileChooser chooser;
+	private List<String> extensoes; 
+	
+	public Util(){
+		chooser = new FileChooser();
+		chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("TXT Images", "*.txt"),
+                new FileChooser.ExtensionFilter("XML", "*.xml"),
+                new FileChooser.ExtensionFilter("PROPERTIES", "*.properties"),
+                new FileChooser.ExtensionFilter("XSL", "*.xsl")
+         );
+	}
 	
 	public double calcularProgresso(int total, int atual) {
 		double resultado = 0;
@@ -25,24 +38,20 @@ public class Util {
 	}
 	
 	public File abrirNovoArquivo(Stage palco) {
-		chooser = new FileChooser();
-		FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("Apenas arquivos (TXT)", "*.txt");
-		chooser.getExtensionFilters().add(extension);
 		file = chooser.showOpenDialog(palco);
 		return file;
 	}
 	
 	public boolean salvarNovoArquivo(Editor editor){
 		boolean resultado = false;
-		chooser = new FileChooser();
-		FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("Apenas arquivos (TXT)", "*.txt");
-		chooser.getExtensionFilters().add(extension);
 		file = chooser.showSaveDialog((Stage) editor.getTexto().getScene().getWindow());
 		if(file != null){
 			String path = file.getAbsolutePath();
-			if(!path.endsWith(".txt")){
+			if(!path.endsWith(".txt") && !path.endsWith(".xml") 
+					&& !path.endsWith(".properties") &&  !path.endsWith(".xsl")){
 				path = path + ".txt";
 			}
+			
 			editor.setFile(new File(path));
 			resultado = true;
 		}

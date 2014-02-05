@@ -60,7 +60,7 @@
 					minHeight="23.0" minWidth="5.0" />
 				<Button id="botaoMenu" fx:id="btnProximo" text="P" minHeight="23.0"
 					minWidth="5.0" />
-				<Label text="Fonte:" />
+				<Label id="textoFonte" text="Fonte:" />
 				<ComboBox id="botaoMenu" visibleRowCount="5" 
 					fx:id="fonteCombo" minHeight="23.0" minWidth="10.0">
 					<value>

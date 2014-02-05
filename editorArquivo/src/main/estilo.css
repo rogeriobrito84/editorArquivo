@@ -3,69 +3,52 @@ Pane{
 	-fx-opacity: 0.7;
 }
 
-AnchorPane{
-	-fx-font-size: 10;
-}
-
-
-#menu{
-	-fx-background-color:
-        linear-gradient(#363636 35%, #363636 35%, #191d22 100%);
-    -fx-font-family: "Arial";
-    -fx-font-size: 12;
-    -fx-text-fill: white;
-    
-}
-
-.menu-button{
-	
-}
-
-.label{
-	-fx-text-fill: white;
-}
-
-.list-cell{
-	-fx-text-fill: white;
-}
-
-.check-box{
-	-fx-text-fill: white;
-}
-
-.button{
-	-fx-text-fill: white;
-}
-
-
-
-.indexed-cell:hover{
-	 -fx-background-color:
-        #000000,
-        linear-gradient(#7ebcea, #2f4f8f),
-        linear-gradient(#395cab, #223768);
-}
-
-.menu-item:hover{
-	 -fx-background-color:
-        #000000,
-        linear-gradient(#7ebcea, #2f4f8f),
-        linear-gradient(#395cab, #223768);
-}
-
 #botaoMenu{
    -fx-background-color:
         #000000,
         linear-gradient(#7ebcea, #2f4f8f),
         linear-gradient(#395cab, #223768);
-    -fx-text-fill: white;
     -fx-font-size: 12;
-    
 }
-
 
 
 #textoPesquisa{
 	 -fx-background-radius: 30;
 	 -fx-padding: 5 10 5 10;
 }
+
+AnchorPane{
+	-fx-font-size: 10;
+}
+
+.tab-pane,.tab-pane .tab-header-area .tab-header-background, #menu {
+	-fx-background-color:
+        linear-gradient(#363636 35%, #363636 35%, #191d22 100%);
+    -fx-font-family: "Arial";
+    -fx-font-size: 12;
+    -fx-border-color:black;
+    -fx-text-fill: white;
+}
+
+#textoFonte{
+	-fx-text-fill: white;
+}
+
+.check-box{
+	-fx-text-fill: white;
+}
+.button{
+	-fx-text-fill: white;
+}
+
+.combo-box .list-cell{
+	-fx-text-fill: white;
+}
+
+.munu-button .menu-item{
+	-fx-text-fill: white;
+}
+
+
+
+

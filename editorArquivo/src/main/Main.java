@@ -20,7 +20,7 @@ public class Main extends Application{
 			FXMLLoader loader = new FXMLLoader(ControleMain.class.getResource("principal.fxml"));
 			try {
 				//palco = new Stag'e(StageStyle.TRANSPARENT);
-				
+				palco.setTitle("Editor de Arquivos");
 				palco.setMinWidth(200);
 				palco.setMinHeight(200);
 				ControleMain pane = (ControleMain) loader.load();

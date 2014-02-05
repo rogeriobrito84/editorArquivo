@@ -27,7 +27,7 @@ public class SalvarArquivo implements Runnable {
 	public void run() {
 		editor.setPodeCarregarAtualizar(false);
 		try {
-			if(editor.getFile() != null && editor.getFile().canExecute() ){
+			if(editor.getFile() != null){
 				editor.centralizarMostrarProgresso();
 				editor.mostrarProcesso();
 				bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(editor.getFile()), "UTF-8"));
