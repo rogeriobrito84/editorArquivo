@@ -560,8 +560,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 		double larguraMin = 120;
 		 double larguraAtual = textoPesquisa.getPrefWidth();
 		 double LarguraNova = (TextoNovo.length() * 9);
-		 double larguraMax = (tabPane.getWidth() - 390);
-		 System.out.println("Scala: " + larguraAtual+ "Ltotal: " + tabPane.getWidth()+ "texto: " + TextoNovo.length());
+		 double larguraMax = (tabPane.getWidth() - 395);
 		 if(LarguraNova >= larguraAtual && LarguraNova <= larguraMax){
 			 textoPesquisa.setPrefWidth(LarguraNova);
 		 }else if(LarguraNova <= larguraAtual && larguraAtual > larguraMin){

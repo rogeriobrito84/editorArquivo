@@ -3,7 +3,7 @@ Pane{
 	-fx-opacity: 0.7;
 }
 
-#botaoMenu{
+#botaoMenu {
    -fx-background-color:
         #000000,
         linear-gradient(#7ebcea, #2f4f8f),
@@ -32,6 +32,7 @@ AnchorPane{
 
 #textoFonte{
 	-fx-text-fill: white;
+	-fx-font-size: 12;
 }
 
 .check-box{
@@ -44,10 +45,21 @@ AnchorPane{
 .combo-box .list-cell{
 	-fx-text-fill: white;
 }
-
-.munu-button .menu-item{
-	-fx-text-fill: white;
+.combo-box .arrow-button{
+	-fx-background-color: white;
 }
+
+.menu-button .label {
+ 	-fx-text-fill: white;
+ }
+ .check-box .box{
+	-fx-background-color: white;
+ }
+ .progress-indicator{
+ 	-fx-progress-color: #2f4f8f;
+ 	-fx-text-background-color: white;
+ 	-fx-font-size: 30;
+ }
 
 
 

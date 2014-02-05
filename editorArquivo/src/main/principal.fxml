@@ -87,7 +87,9 @@
 						</FXCollections>
 					</items>
 				</ComboBox>
-				<CheckBox  fx:id="checkAuto" mnemonicParsing="false" text="Auto" minHeight="23.0" />
+				<Label id="textoFonte" text="Auto" />
+				<CheckBox id="textoFonte" fx:id="checkAuto" mnemonicParsing="false"
+				  minHeight="23.0" />
 			</items>
 		</ToolBar>
 		<TabPane fx:id="tabPane" layoutY="35.0" prefHeight="376.0"

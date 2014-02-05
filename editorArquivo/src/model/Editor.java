@@ -41,7 +41,6 @@ public class Editor {
 		this.id = id;
 		this.progresso = new ProgressIndicator(0);
 		progresso.setVisible(false);
-		progresso.setStyle("-fx-text-background-color: white;-fx-font-size: 20;");
 		tab.setText("novo "+ id);
 		tab.setId(String.valueOf(id));
 		pane.getChildren().addAll(texto, lightBack, progresso);

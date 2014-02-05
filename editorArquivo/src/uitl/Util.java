@@ -20,10 +20,10 @@ public class Util {
 	public Util(){
 		chooser = new FileChooser();
 		chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("TXT Images", "*.txt"),
-                new FileChooser.ExtensionFilter("XML", "*.xml"),
-                new FileChooser.ExtensionFilter("PROPERTIES", "*.properties"),
-                new FileChooser.ExtensionFilter("XSL", "*.xsl")
+                new FileChooser.ExtensionFilter("txt", "*.txt"),
+                new FileChooser.ExtensionFilter("xml", "*.xml"),
+                new FileChooser.ExtensionFilter("properties", "*.properties"),
+                new FileChooser.ExtensionFilter("xsl", "*.xsl")
          );
 	}
 	

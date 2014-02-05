@@ -14,5 +14,5 @@
       <String fx:value="Item 3" />
     </FXCollections>
   </items>
-</ComboBox>
+</ComboBox><CheckBox contentDisplay="RIGHT" layoutX="245.0068359375" layoutY="142.19999980926514" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="TEXTE" textAlignment="CENTER" />
 </children></AnchorPane>
