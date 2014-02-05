@@ -21,12 +21,11 @@ AnchorPane{
 	-fx-font-size: 10;
 }
 
-.tab-pane,.tab-pane .tab-header-area .tab-header-background, #menu {
+.tab-pane, #menu {
 	-fx-background-color:
-        linear-gradient(#363636 35%, #363636 35%, #191d22 100%);
+        linear-gradient(#363636 25%, #363636 25%, #191d22 100%);
     -fx-font-family: "Arial";
     -fx-font-size: 12;
-    -fx-border-color:black;
     -fx-text-fill: white;
 }
 
@@ -60,6 +59,20 @@ AnchorPane{
  	-fx-text-background-color: white;
  	-fx-font-size: 30;
  }
+.tab-header-area .tab-header-background{
+	-fx-background-color: linear-gradient(#191d22 100%, #363636 10%, #363636 25%);
+    
+}
+.tab-header-area{
+	-fx-pref-height: 25;
+	-fx-padding:  3 0 0 0;
+}
+.tab{
+	-fx-font-size: 12;
+	-fx-pref-height: 20;
+	-fx-tab-min-height: 20;
+	-fx-padding:  0 0 0 5;
+}
 
 
 

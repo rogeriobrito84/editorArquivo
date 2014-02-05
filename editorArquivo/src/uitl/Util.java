@@ -23,7 +23,8 @@ public class Util {
                 new FileChooser.ExtensionFilter("txt", "*.txt"),
                 new FileChooser.ExtensionFilter("xml", "*.xml"),
                 new FileChooser.ExtensionFilter("properties", "*.properties"),
-                new FileChooser.ExtensionFilter("xsl", "*.xsl")
+                new FileChooser.ExtensionFilter("xsl", "*.xsl"),
+                new FileChooser.ExtensionFilter("java", "*.java")
          );
 	}
 	

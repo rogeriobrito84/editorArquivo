@@ -45,8 +45,8 @@ public class Editor {
 		tab.setId(String.valueOf(id));
 		pane.getChildren().addAll(texto, lightBack, progresso);
 		//Configurando o tamanho da área da Tab
-		pane.maxHeightProperty().bind(altura.subtract(62));
-		pane.minHeightProperty().bind(altura.subtract(62));
+		pane.maxHeightProperty().bind(altura.subtract(50));
+		pane.minHeightProperty().bind(altura.subtract(50));
 		pane.minWidthProperty().bind(largura);
 		pane.maxWidthProperty().bind(largura);
 		//Configurando o tamanho do TextArea

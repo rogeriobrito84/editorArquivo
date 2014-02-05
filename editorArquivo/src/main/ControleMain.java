@@ -303,8 +303,8 @@ public class ControleMain extends AnchorPane implements Initializable {
 		abilitarDesabilitarMenu();
 
 		// Setando o tamnho do tabPane
-		tabPane.maxHeightProperty().bind(heightY.subtract(35));
-		tabPane.minHeightProperty().bind(heightY.subtract(35));
+		tabPane.maxHeightProperty().bind(heightY.subtract(27));
+		tabPane.minHeightProperty().bind(heightY.subtract(27));
 		tabPane.minWidthProperty().bind(widthX);
 		tabPane.maxWidthProperty().bind(widthX);
 		tabPane.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
@@ -394,7 +394,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 				tabPane.getSelectionModel().select(tab);
 			}else{
 				editor = novoArquivo();
-				editor.getTab().setText(file.getName().replace(".txt", ""));
+				editor.getTab().setText(file.getName());
 				editor.setFile(file);
 				if(editor.isPodeCarregarAtualizar()){
 					CarregarAtualizarArquivo carregar = new CarregarAtualizarArquivo(editor, util);
@@ -422,7 +422,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 					}
 					editor.setFile(editorAux.getFile());
 				}
-				editor.getTab().setText(editor.getFile().getName().replace(".txt", ""));
+				editor.getTab().setText(editor.getFile().getName());
 				temArquivo = true;
 			}
 		}else{
@@ -450,7 +450,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 				editor.setFile(editorAux.getFile());
 			}
 			if(editor.isPodeCarregarAtualizar()){
-				editor.getTab().setText(editor.getFile().getName().replace(".txt", ""));
+				editor.getTab().setText(editor.getFile().getName());
 				SalvarArquivo salvar = new SalvarArquivo(editor, util);
 				new Thread(salvar).start();
 			}
