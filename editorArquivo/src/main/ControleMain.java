@@ -866,16 +866,19 @@ public class ControleMain extends AnchorPane implements Initializable {
 			limparSalvar.setDisable(true);
 			contTabs = 0;
 		}
-		if(tabPane1.getTabs().size() > 1){
+		if(tabPane1.getTabs().size() > 1 && split.getItems().size() < 2){
 			dividir.setDisable(false);
+		}else{
+			dividir.setDisable(true);
 		}
 		if(split.getItems().size() > 1){
 			comparar.setDisable(false);
-			dividir.setDisable(true);
-		}
-		if(tabPane2.getTabs().size() < 1 || tabPane1.getTabs().size() < 1){
-			split.getItems().remove(tabPane2);
-			dividir.setDisable(true);
+			if(tabPane2.getTabs().size() < 1 || tabPane1.getTabs().size() < 1){
+				split.getItems().remove(tabPane2);
+				dividir.setDisable(true);
+				comparar.setDisable(true);
+			}
+		}else{
 			comparar.setDisable(true);
 		}
 		abilitarPesquisa();
