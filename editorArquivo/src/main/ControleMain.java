@@ -568,18 +568,24 @@ public class ControleMain extends AnchorPane implements Initializable {
 			 if(id > -1){
 				 editor = getEditorPorId(id);
 				 if(editor != null){
-					 adicionarEventoAoFechar(editor.getTab());
 					 tabPane2.getTabs().add(editor.getTab());
 					 tabPane1.getTabs().remove(editor.getTab());
 					 split.getItems().add(tabPane2);
 					 tabPane2.getSelectionModel().select(editor.getTab());
+					 abilitarDesabilitarMenu();
 				 }
 			 }
 		}
 	}
 	
 	public void compararArquivos(){
-		
+		Editor editorSelecionado;
+		Editor EditorNaoSelecionado;
+		if(split.getItems().size() > 1){
+			editorSelecionado = getEditorPorId(getIdTabSelecionado());
+			EditorNaoSelecionado = getEditorPorId(getIdTabTabNaoSelecionado());
+			
+		}
 	}
 	
 	
@@ -790,6 +796,21 @@ public class ControleMain extends AnchorPane implements Initializable {
 		return id;
 	}
 	
+	public int getIdTabTabNaoSelecionado(){
+		TabPane tabPane = getTabPane();
+		if(tabPane.equals(tabPane1)){
+			tabPane = tabPane2;
+		}else{
+			tabPane = tabPane1;
+		}
+		int id = -1;
+		if(tabPane.getTabs().size() > 0){
+			Tab tab =   tabPane.getSelectionModel().getSelectedItem();
+			id = Integer.valueOf(tab.getId());
+		}
+		return id;
+	}
+	
 	public TabPane getTabPane(){
 		TabPane tabPane = tabPane1;
 		Editor editor;
@@ -829,8 +850,6 @@ public class ControleMain extends AnchorPane implements Initializable {
 			fechar.setDisable(false);
 			atualizar.setDisable(false);
 			atualizarTudo.setDisable(false);
-			dividir.setDisable(false);
-			comparar.setDisable(false);
 			limpar.setDisable(false);
 			textoPesquisa.setDisable(false);
 			checkAuto.setDisable(false);
@@ -846,16 +865,18 @@ public class ControleMain extends AnchorPane implements Initializable {
 			atualizarTudo.setDisable(true);
 			limparSalvar.setDisable(true);
 			contTabs = 0;
-			if(split.getItems().size() > 1){
-				dividir.setDisable(true);
-				comparar.setDisable(true);
-				if(tabPane2.getTabs().size() < 1 || tabPane1.getTabs().size() < 1){
-					split.getItems().remove(tabPane2);
-					dividir.setDisable(false);
-					comparar.setDisable(false);
-				}
-			}else{
-			}
+		}
+		if(tabPane1.getTabs().size() > 1){
+			dividir.setDisable(false);
+		}
+		if(split.getItems().size() > 1){
+			comparar.setDisable(false);
+			dividir.setDisable(true);
+		}
+		if(tabPane2.getTabs().size() < 1 || tabPane1.getTabs().size() < 1){
+			split.getItems().remove(tabPane2);
+			dividir.setDisable(true);
+			comparar.setDisable(true);
 		}
 		abilitarPesquisa();
 	}

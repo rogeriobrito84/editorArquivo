@@ -47,7 +47,7 @@ public class AutoAtualizar implements Runnable {
 				if(tabPane.equals(tabPane1)){
 					tabPane = tabPane2;
 				}else{
-					tabPane = tabPane2;
+					tabPane = tabPane1;
 				}
 				Thread.sleep(tempoParaAtualizacao); 
 			}catch(Exception e){}

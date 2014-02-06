@@ -28,7 +28,7 @@ public class AutoAtualizarTudo implements Runnable {
 						CarregarAtualizarArquivo atualizar = new CarregarAtualizarArquivo(editor, util);
 						new Thread(atualizar).start();
 					}
-					Thread.sleep(1000);
+					Thread.sleep(500);
 				}catch(Exception e){
 					editor.esconderProcesso();
 				}
