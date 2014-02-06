@@ -1,43 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import javafx.collections.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import main.*?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.collections.ObservableList?>
-<?import javafx.collections.*?>
-
-
 
 <ControleMain id="panePrincipal" fx:id="panePrincipal"
 	maxHeight="-Infinity" maxWidth="-Infinity" minHeight="300.0" minWidth="300.0"
 	prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8"
 	xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.ControleMain">
 	<children>
-		<ToolBar id="menu" fx:id="menu" minHeight="25.0" minWidth="300.0" 
+		<ToolBar id="menu" fx:id="menu" minHeight="25.0" minWidth="300.0"
 			prefHeight="25.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
 			<items>
-				<MenuButton  id="botaoMenu" fx:id="menuArquivo" minHeight="20.0"
+				<MenuButton id="botaoMenu" fx:id="menuArquivo" minHeight="20.0"
 					minWidth="60.0" mnemonicParsing="false" text="Arquivo"
 					xmlns:fx="http://javafx.com/fxml">
 					<items>
 						<MenuItem fx:id="Novo" mnemonicParsing="false"
-							text="Novo --> CTRL + N" />
+							text="Novo --&gt; CTRL + N" />
 						<MenuItem fx:id="abrir" mnemonicParsing="false"
-							text="Abrir --> CTRL + O" />
+							text="Abrir --&gt; CTRL + O" />
 						<MenuItem fx:id="salvar" mnemonicParsing="false"
-							text="Salvar --> CTRL + S" xmlns="http://javafx.com/javafx/8"
+							text="Salvar --&gt; CTRL + S" xmlns="http://javafx.com/javafx/8"
 							xmlns:fx="http://javafx.com/fxml/1" />
 						<MenuItem fx:id="salvarComo" mnemonicParsing="false"
-							text="Salvar Como --> CTRL + Shift + S" xmlns="http://javafx.com/javafx/8"
+							text="Salvar Como --&gt; CTRL + Shift + S" xmlns="http://javafx.com/javafx/8"
 							xmlns:fx="http://javafx.com/fxml/1" />
 						<MenuItem fx:id="fechar" mnemonicParsing="false"
-							text="Fechar --> CTRL + F" />
+							text="Fechar --&gt; CTRL + F" />
 					</items>
 				</MenuButton>
 				<MenuButton id="botaoMenu" fx:id="menuAcoes" minHeight="20.0"
@@ -45,27 +37,31 @@
 					xmlns:fx="http://javafx.com/fxml">
 					<items>
 						<MenuItem fx:id="atualizar" mnemonicParsing="false"
-							text="Atualizar --> CTRL + T" />
+							text="Atualizar --&gt; CTRL + T" />
 						<MenuItem fx:id="atualizarTudo" mnemonicParsing="false"
-							text="Atualizar Tudo --> CTRL + Shift + T" />
+							text="Atualizar Tudo --&gt; CTRL + Shift + T" />
+						<MenuItem fx:id="dividir" mnemonicParsing="false"
+							text="Dividir Tela --&gt; CTRL + D" />
+						<MenuItem fx:id="comparar" mnemonicParsing="false"
+							text="Comparar Arquivos --&gt; CTRL + P" />
 						<MenuItem fx:id="limpar" mnemonicParsing="false"
-							text="Limpar --> CTRL + L" />
+							text="Limpar --&gt; CTRL + L" />
 						<MenuItem fx:id="limparSalvar" mnemonicParsing="false"
-							text="Limpar e Salvar --> CTRL + Shift + L" />
+							text="Limpar e Salvar --&gt; CTRL + Shift + L" />
 					</items>
 				</MenuButton>
-				<TextField fx:id="textoPesquisa" promptText="Pesquisar"
-					minWidth="120.0" prefWidth="120.0" minHeight="20.0" />
-				<Button id="botaoMenu" fx:id="btnAnterior" text="A"
-					minHeight="20.0" minWidth="5.0" />
-				<Button id="botaoMenu" fx:id="btnProximo" text="P" minHeight="20.0"
-					minWidth="5.0" />
+				<TextField fx:id="textoPesquisa" minHeight="20.0"
+					minWidth="120.0" prefWidth="120.0" promptText="Pesquisar" />
+				<Button id="botaoMenu" fx:id="btnAnterior" minHeight="20.0"
+					minWidth="5.0" text="A" />
+				<Button id="botaoMenu" fx:id="btnProximo" minHeight="20.0"
+					minWidth="5.0" text="P" />
 				<Label id="textoFonte" text="Fonte:" />
-				<ComboBox id="botaoMenu" visibleRowCount="5" 
-					fx:id="fonteCombo" minHeight="20.0" minWidth="10.0">
+				<ComboBox id="botaoMenu" fx:id="fonteCombo" minHeight="20.0"
+					minWidth="10.0" visibleRowCount="5">
 					<value>
-        				<String fx:value="10" />
-    				</value>
+						<String fx:value="10" />
+					</value>
 					<items>
 						<FXCollections fx:factory="observableArrayList">
 							<String fx:value="10" />
@@ -88,12 +84,14 @@
 					</items>
 				</ComboBox>
 				<Label id="textoFonte" text="Auto" />
-				<CheckBox id="textoFonte" fx:id="checkAuto" mnemonicParsing="false"
-				  minHeight="20.0" />
+				<CheckBox id="textoFonte" fx:id="checkAuto" minHeight="20.0"
+					mnemonicParsing="false" />
 			</items>
 		</ToolBar>
-		<TabPane fx:id="tabPane" layoutY="25.0" prefHeight="376.0"
-			prefWidth="600.0" side="top" tabMinHeight="20.0" tabMinWidth="50.0"
-			xmlns:fx="http://javafx.com/fxml" />
+		<SplitPane fx:id="split" dividerPositions="0.5"
+			focusTraversable="true" layoutY="25.0" prefHeight="375.0" prefWidth="600.0"
+			xmlns:fx="http://javafx.com/fxml">
+			
+		</SplitPane>
 	</children>
 </ControleMain>

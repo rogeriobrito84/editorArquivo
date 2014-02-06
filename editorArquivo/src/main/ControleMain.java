@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.text.TabableView;
+
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -23,6 +23,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
@@ -47,7 +48,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 	@FXML
 	private AnchorPane panePrincipal;
 	@FXML 
-	private TabPane tabPane;
+	private SplitPane split;
 	@FXML
 	private ToolBar menu;
 	@FXML
@@ -68,6 +69,10 @@ public class ControleMain extends AnchorPane implements Initializable {
 	private MenuItem atualizar;
 	@FXML
 	private MenuItem atualizarTudo;
+	@FXML
+	private MenuItem dividir;
+	@FXML
+	private MenuItem comparar;
 	@FXML
 	private MenuItem limpar;
 	@FXML
@@ -93,11 +98,13 @@ public class ControleMain extends AnchorPane implements Initializable {
 	
 	// Atributos da classe
 
-	private long tempoParaAtualizacao = 2000;
+	private long tempoParaAtualizacao = 500;
 	private List<Editor> editores;
 	private Util util;
 	private int contTabs;
 	private Thread threadAtualizar;
+	private TabPane tabPane1;
+	private TabPane tabPane2;
 	private double posicaoX;
 	private double posicaoY;
 	
@@ -175,42 +182,94 @@ public class ControleMain extends AnchorPane implements Initializable {
 		atualizar.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				atualizarArquivo();
+				try {
+					atualizarArquivo();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		
 		atualizarTudo.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				AtualizarTodosArquivos();
+				try {
+					AtualizarTodosArquivos();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		dividir.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				try {
+					dividirTela();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		comparar.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				try {
+					compararArquivos();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		atualizarTudo.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				try {
+					AtualizarTodosArquivos();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
 		limpar.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				limpar();
+				try {
+					limpar();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		
 		limparSalvar.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				limparSalvar();
+				try {
+					limparSalvar();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		
 		textoPesquisa.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
-				abilitarPesquisa();
-				if(event.getCode() == KeyCode.ENTER){
-					if(proximo(textoPesquisa.getText())){
-						textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
-					}else{
-						textoPesquisa.setStyle("-fx-text-fill: white;" +
-								"-fx-background-color: linear-gradient(#ff5400, #be1d00);");
+				try {
+					abilitarPesquisa();
+					if(event.getCode() == KeyCode.ENTER){
+						if(proximo(textoPesquisa.getText())){
+							textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
+						}else{
+							textoPesquisa.setStyle("-fx-text-fill: white;" +
+									"-fx-background-color: linear-gradient(#ff5400, #be1d00);");
+						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		});
@@ -219,7 +278,11 @@ public class ControleMain extends AnchorPane implements Initializable {
 			@Override
 			public void changed(ObservableValue<? extends String> observable,
 					String TextoAntigo, String TextNovo) {
-				 aumentarTextoPesquisa(TextNovo);
+				try {
+					aumentarTextoPesquisa(TextNovo);
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
 			}
 		});
 		
@@ -228,11 +291,15 @@ public class ControleMain extends AnchorPane implements Initializable {
 		btnAnterior.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if(anterior(textoPesquisa.getText())){
-					textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
-				}else{
-					textoPesquisa.setStyle("-fx-text-fill: white;" +
-							"-fx-background-color: linear-gradient(#ff5400, #be1d00);");
+				try {
+					if(anterior(textoPesquisa.getText())){
+						textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
+					}else{
+						textoPesquisa.setStyle("-fx-text-fill: white;" +
+								"-fx-background-color: linear-gradient(#ff5400, #be1d00);");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		});
@@ -240,11 +307,15 @@ public class ControleMain extends AnchorPane implements Initializable {
 		btnProximo.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if(proximo(textoPesquisa.getText())){
-					textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
-				}else{
-					textoPesquisa.setStyle("-fx-text-fill: white;" +
-							"-fx-background-color: linear-gradient(#ff5400, #be1d00);");
+				try {
+					if(proximo(textoPesquisa.getText())){
+						textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
+					}else{
+						textoPesquisa.setStyle("-fx-text-fill: white;" +
+								"-fx-background-color: linear-gradient(#ff5400, #be1d00);");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		});
@@ -253,27 +324,34 @@ public class ControleMain extends AnchorPane implements Initializable {
 			@Override
 			public void changed(ObservableValue<? extends String> observable,
 					String antigoTamanho, String novoTamnanho) {
-				System.out.println("Tamanho: " + novoTamnanho);
-				mudarTamanhoFonte(novoTamnanho);
+				try {
+					mudarTamanhoFonte(novoTamnanho);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		
 		checkAuto.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if (checkAuto.isSelected()) {
-					iniciaTarefaAutoAtualizar();
-				}else{
-					if(threadAtualizar != null){
-						try{
-							if(threadAtualizar.isAlive()){
-								threadAtualizar.interrupt();
-								threadAtualizar = null;
+				try {
+					if (checkAuto.isSelected()) {
+						iniciaTarefaAutoAtualizar();
+					}else{
+						if(threadAtualizar != null){
+							try{
+								if(threadAtualizar.isAlive()){
+									threadAtualizar.interrupt();
+									threadAtualizar = null;
+								}
+							}catch(Exception e){
+								
 							}
-						}catch(Exception e){
-							
 						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		});
@@ -293,8 +371,9 @@ public class ControleMain extends AnchorPane implements Initializable {
 		
 		checkAuto.setTooltip(new Tooltip("Auto Atualizar --> CTRL + SHIFT + ALT + T"));
 		
-		
-		
+		//instanciando tabPanes
+		tabPane1 = new TabPane();
+		tabPane2 = new TabPane();
 		//Inicializando os editores
 		editores = new ArrayList<Editor>();
 		//Incializando a classe Util
@@ -302,12 +381,12 @@ public class ControleMain extends AnchorPane implements Initializable {
 		//Abilitando e desabilitando menus
 		abilitarDesabilitarMenu();
 
-		// Setando o tamnho do tabPane
-		tabPane.maxHeightProperty().bind(heightY.subtract(27));
-		tabPane.minHeightProperty().bind(heightY.subtract(27));
-		tabPane.minWidthProperty().bind(widthX);
-		tabPane.maxWidthProperty().bind(widthX);
-		tabPane.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
+		// Setando o tamnho do split
+		split.maxHeightProperty().bind(heightY.subtract(27));
+		split.minHeightProperty().bind(heightY.subtract(27));
+		split.minWidthProperty().bind(widthX);
+		split.maxWidthProperty().bind(widthX);
+		split.getItems().add(tabPane1);
 		
 		
 		
@@ -364,20 +443,12 @@ public class ControleMain extends AnchorPane implements Initializable {
 		contTabs++;
 		Tab tab;
 		Editor editor = new Editor(contTabs, widthX, heightY, fonteCombo.getSelectionModel().getSelectedItem()); 
-		tabPane.getTabs().add(editor.getTab());
+		getTabPane().getTabs().add(editor.getTab());
 		editores.add(editor);
-		editor.getTab().setOnClosed(new EventHandler<Event>() {
-			@Override 
-			public void handle(Event event) {
-				Tab tab = (Tab) event.getSource();
-				int id = Integer.valueOf(tab.getId());
-				removerEditor(id);
-				abilitarDesabilitarMenu();
-				
-			}
-		});
+		adicionarEventoAoFechar(editor.getTab());
+		
 		tab = getTab(editor.getId());
-		tabPane.getSelectionModel().select(tab);
+		getTabPane().getSelectionModel().select(tab);
 		abilitarDesabilitarMenu();
 		return editor;
 	}
@@ -391,7 +462,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 			editor = getEditorPorNome(file.getAbsolutePath());
 			if(editor != null){
 				tab = getTab(editor.getId());
-				tabPane.getSelectionModel().select(tab);
+				getTabPane().getSelectionModel().select(tab);
 			}else{
 				editor = novoArquivo();
 				editor.getTab().setText(file.getName());
@@ -400,7 +471,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 					CarregarAtualizarArquivo carregar = new CarregarAtualizarArquivo(editor, util);
 					new Thread(carregar).start();
 					tab = getTab(editor.getId());
-					tabPane.getSelectionModel().select(tab);
+					getTabPane().getSelectionModel().select(tab);
 				}
 			}
 		}
@@ -418,7 +489,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 					Tab tab = getTab(editorAux.getId());
 					if(Integer.valueOf(tab.getId()) != getIdTabSelecionado()){
 						removerEditor(editorAux.getId());
-						tabPane.getTabs().remove(tab);
+						getTabPane().getTabs().remove(tab);
 					}
 					editor.setFile(editorAux.getFile());
 				}
@@ -444,7 +515,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 			if(editorAux != null){
 				Tab tab = getTab(editorAux.getId());
 				if(Integer.valueOf(tab.getId()) != getIdTabSelecionado()){
-					tabPane.getTabs().remove(tab);
+					getTabPane().getTabs().remove(tab);
 					removerEditor(editorAux.getId());
 				}
 				editor.setFile(editorAux.getFile());
@@ -458,10 +529,10 @@ public class ControleMain extends AnchorPane implements Initializable {
 	}
 	
 	public void fecharTab(){
-		if(tabPane.getTabs().size() > 0){
+		if(getTabPane().getTabs().size() > 0){
 			int id = getIdTabSelecionado();
 			Tab tab = getTab(id);
-			tabPane.getTabs().remove(tab);
+			getTabPane().getTabs().remove(tab);
 			removerEditor(id);
 			abilitarDesabilitarMenu();
 		}
@@ -487,6 +558,30 @@ public class ControleMain extends AnchorPane implements Initializable {
 			new Thread(atualizarTudo).start();
 		}
 	}
+	
+	public void dividirTela(){
+		Editor editor;
+		int id;
+		if(split.getItems().size() == 1 && tabPane1.getTabs().size() > 1){
+			tabPane2 = new TabPane();
+			 id = getIdTabSelecionado();
+			 if(id > -1){
+				 editor = getEditorPorId(id);
+				 if(editor != null){
+					 adicionarEventoAoFechar(editor.getTab());
+					 tabPane2.getTabs().add(editor.getTab());
+					 tabPane1.getTabs().remove(editor.getTab());
+					 split.getItems().add(tabPane2);
+					 tabPane2.getSelectionModel().select(editor.getTab());
+				 }
+			 }
+		}
+	}
+	
+	public void compararArquivos(){
+		
+	}
+	
 	
 	public void limpar() {
 		int id = getIdTabSelecionado();
@@ -535,7 +630,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 	public void iniciaTarefaAutoAtualizar() {
 		if(editores.size() > 0){
 			if(threadAtualizar == null){
-				AutoAtualizar tarefaAutoAtualizar = new AutoAtualizar(editores, checkAuto, util, tabPane, tempoParaAtualizacao);
+				AutoAtualizar tarefaAutoAtualizar = new AutoAtualizar(editores, checkAuto, util, tabPane1, tabPane2, tempoParaAtualizacao);
 				threadAtualizar = new  Thread(tarefaAutoAtualizar);
 				threadAtualizar.start();
 			}
@@ -560,7 +655,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 		double larguraMin = 120;
 		 double larguraAtual = textoPesquisa.getPrefWidth();
 		 double LarguraNova = (TextoNovo.length() * 9);
-		 double larguraMax = (tabPane.getWidth() - 395);
+		 double larguraMax = (menu.getWidth() - 395);
 		 if(LarguraNova >= larguraAtual && LarguraNova <= larguraMax){
 			 textoPesquisa.setPrefWidth(LarguraNova);
 		 }else if(LarguraNova <= larguraAtual && larguraAtual > larguraMin){
@@ -578,6 +673,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 	
 	
 	private void acessarAtalhos(KeyEvent key) throws InterruptedException{
+		TabPane tabPane = getTabPane();
 		if(ctrlNovo.match(key)){
 			novoArquivo();
 		}
@@ -645,6 +741,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 		return editor;
 	}
 	
+	
 	private Editor getEditorPorNome(String nome){
 		Editor editor = null;
 		for(int i = 0; i < editores.size();i++){
@@ -673,6 +770,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 	
 	public Tab getTab(int id){
 		Tab tab = null;
+		TabPane tabPane = getTabPane();
 		for(int i = 0; i < tabPane.getTabs().size(); i++){
 			if(tabPane.getTabs().get(i).getId().equals(String.valueOf(id))){
 				tab = tabPane.getTabs().get(i);
@@ -684,22 +782,55 @@ public class ControleMain extends AnchorPane implements Initializable {
 	
 	public int getIdTabSelecionado(){
 		int id = -1;
+		TabPane tabPane = getTabPane();
 		if(tabPane.getTabs().size() > 0){
 			Tab tab =   tabPane.getSelectionModel().getSelectedItem();
 			id = Integer.valueOf(tab.getId());
 		}
 		return id;
 	}
+	
+	public TabPane getTabPane(){
+		TabPane tabPane = tabPane1;
+		Editor editor;
+		int id;
+		if(tabPane2.getTabs().size() > 0){
+			id = Integer.valueOf(tabPane2.getSelectionModel().getSelectedItem().getId());
+			editor = getEditorPorId(id);
+			if(editor != null){
+				if(editor.getTexto().isFocused()){
+					tabPane = tabPane2;
+				}
+			}
+		}
+		return tabPane;
+	}
+	
+	public void adicionarEventoAoFechar(Tab tab){
+		tab.setOnClosed(new EventHandler<Event>() {
+			@Override 
+			public void handle(Event event) {
+				Tab tab = (Tab) event.getSource();
+				int id = Integer.valueOf(tab.getId());
+				removerEditor(id);
+				abilitarDesabilitarMenu();
+			}
+		});
+	}
+	
 	/**
 	 * Abilita as opções do menu apenas se tiver algum editor aberto.
 	 */
 	public void abilitarDesabilitarMenu(){
+		TabPane tabPane = getTabPane();
 		if(tabPane.getTabs().size() > 0){
 			salvar.setDisable(false);
 			salvarComo.setDisable(false);
 			fechar.setDisable(false);
 			atualizar.setDisable(false);
 			atualizarTudo.setDisable(false);
+			dividir.setDisable(false);
+			comparar.setDisable(false);
 			limpar.setDisable(false);
 			textoPesquisa.setDisable(false);
 			checkAuto.setDisable(false);
@@ -715,6 +846,16 @@ public class ControleMain extends AnchorPane implements Initializable {
 			atualizarTudo.setDisable(true);
 			limparSalvar.setDisable(true);
 			contTabs = 0;
+			if(split.getItems().size() > 1){
+				dividir.setDisable(true);
+				comparar.setDisable(true);
+				if(tabPane2.getTabs().size() < 1 || tabPane1.getTabs().size() < 1){
+					split.getItems().remove(tabPane2);
+					dividir.setDisable(false);
+					comparar.setDisable(false);
+				}
+			}else{
+			}
 		}
 		abilitarPesquisa();
 	}

@@ -69,16 +69,16 @@ public class CarregarAtualizarArquivo implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("Estourou no Carregar!");
-			e.printStackTrace();
+//			System.out.println("Estourou no Carregar!");
+//			e.printStackTrace();
 			editor.esconderProcesso();
 		} finally {
 			if(br != null){
 				try {
 					br.close();
 				} catch (IOException e) {
-					System.out.println("Estourou no Carregar!");
-					e.printStackTrace();
+//					System.out.println("Estourou no Carregar!");
+//					e.printStackTrace();
 				}
 			}
 			editor.esconderProcesso();

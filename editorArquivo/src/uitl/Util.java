@@ -19,13 +19,16 @@ public class Util {
 	
 	public Util(){
 		chooser = new FileChooser();
-		chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("txt", "*.txt"),
-                new FileChooser.ExtensionFilter("xml", "*.xml"),
-                new FileChooser.ExtensionFilter("properties", "*.properties"),
-                new FileChooser.ExtensionFilter("xsl", "*.xsl"),
-                new FileChooser.ExtensionFilter("java", "*.java")
-         );
+		extensoes = new ArrayList<String>();
+		extensoes.add("*.txt");
+		extensoes.add("*.xml");
+		extensoes.add("*.properties");
+		extensoes.add("*.xsl");
+		extensoes.add("*.java");
+		FileChooser.ExtensionFilter filtro = new FileChooser.ExtensionFilter(
+				"Arquivos .txt - xml - properties - xsl - java" , extensoes
+		);
+		chooser.getExtensionFilters().add(filtro);
 	}
 	
 	public double calcularProgresso(int total, int atual) {

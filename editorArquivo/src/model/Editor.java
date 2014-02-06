@@ -45,8 +45,8 @@ public class Editor {
 		tab.setId(String.valueOf(id));
 		pane.getChildren().addAll(texto, lightBack, progresso);
 		//Configurando o tamanho da área da Tab
-		pane.maxHeightProperty().bind(altura.subtract(50));
-		pane.minHeightProperty().bind(altura.subtract(50));
+		pane.maxHeightProperty().bind(altura.subtract(54));
+		pane.minHeightProperty().bind(altura.subtract(54));
 		pane.minWidthProperty().bind(largura);
 		pane.maxWidthProperty().bind(largura);
 		//Configurando o tamanho do TextArea
@@ -99,15 +99,19 @@ public class Editor {
 		int linhas = 0;
 		linhas = getQuantidadeLinhasArquivo();
 		if(linhas >= 10 && linhas <= 100){
-			tempo =  Math.round(linhas / 10);
-		}else if(linhas > 100 && linhas <= 1000){
+			tempo =  Math.round(linhas / 2);
+		}else if(linhas > 100 && linhas <= 300){
+			tempo = Math.round(linhas / 10);
+		}else if(linhas > 300 && linhas <= 500){
+			tempo = Math.round(linhas / 30);
+		}else if(linhas > 500 && linhas <= 1000){
 			tempo = Math.round(linhas / 50);
 		}else if(linhas > 1000 && linhas <= 4000){
-			tempo = Math.round(linhas / 500);
+			tempo = Math.round(linhas / 200);
 		}else if(linhas > 4000 && linhas <= 10000){
-			tempo = Math.round(linhas / 400);
+			tempo = Math.round(linhas / 300);
 		}else if(linhas > 10000 && linhas <= 20000){
-			tempo = Math.round(linhas / 1000);
+			tempo = Math.round(linhas / 9000);
 		}else if(linhas > 20000 && linhas <= 50000){
 			tempo = Math.round(linhas / 1000);
 		}else if(linhas > 50000){
@@ -123,9 +127,9 @@ public class Editor {
 		int tempo = 0;
 		int linhas = 0;
 		linhas = getQuantidadeLinhasArquivo();
-		if(linhas >= 10 && linhas < 100){
+		if(linhas >= 10 && linhas < 4000){
 			tempo =  Math.round(linhas / 10);
-		}else if(linhas > 100 && linhas <= 10000){
+		}else if(linhas > 4000 && linhas <= 1000){
 			tempo =  Math.round(linhas / 100);
 		}else if(linhas > 10000){
 			tempo = Math.round(linhas / 100);
