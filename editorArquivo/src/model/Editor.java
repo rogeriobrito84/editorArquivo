@@ -140,6 +140,9 @@ public class Editor {
 	}
 	
 	public boolean localizarAnterior(String pesquisa){
+		setPodeCarregarAtualizar(false);
+		mostrarProcesso();
+		progresso.setProgress(2);
 		boolean localizou = true;
 		if(texto.getSelection().getEnd() == ultimaPosicaoCursor){
 			texto.positionCaret(texto.getSelection().getStart()); 
@@ -157,10 +160,15 @@ public class Editor {
 				localizou = false;
 			}
 		}
+		esconderProcesso();
+		setPodeCarregarAtualizar(true);
 		return localizou;
 	}
 	
 	public boolean localizarProximo(String pesquisa){
+		setPodeCarregarAtualizar(false);
+		mostrarProcesso();
+		progresso.setProgress(2);
 		boolean localizou = true;
 		if(texto.getSelection().getEnd() == ultimaPosicaoCursor){
 			texto.positionCaret(ultimaPosicaoCursor);
@@ -168,7 +176,7 @@ public class Editor {
 		int posicaoTexto = texto.getText().indexOf(pesquisa, texto.getAnchor());
 		if(posicaoTexto > -1){
 			texto.positionCaret(posicaoTexto);
-            texto.selectRange(posicaoTexto, (posicaoTexto+pesquisa.length()));
+            texto.selectRange(posicaoTexto, (posicaoTexto + pesquisa.length()));
             ultimaPosicaoCursor = (posicaoTexto + texto.getSelectedText().length());
 		}else{
 			if(texto.getText().contains(pesquisa)){
@@ -179,7 +187,36 @@ public class Editor {
 				localizou = false;
 			}
 		}
+		esconderProcesso();
+		setPodeCarregarAtualizar(true);
 		return localizou;
+	}
+	
+	public boolean compararArquivos(Editor editor){
+		setPodeCarregarAtualizar(false);
+		mostrarProcesso();
+		boolean igual = true;
+		String textoAuxiliar = "";
+		TextArea pesquisa = editor.getTexto();
+		int tamanhoTexto;
+			if(texto.getLength() < pesquisa.getLength()){
+				tamanhoTexto = texto.getLength();
+				textoAuxiliar = pesquisa.getText(0, texto.getLength());
+			}else{
+				tamanhoTexto = pesquisa.getLength();
+				textoAuxiliar = pesquisa.getText();
+			}
+			
+			for(int i = 0; i <= tamanhoTexto; i++){
+				if(!texto.getText().substring(0, i).equals(textoAuxiliar.substring(0, i))){
+					texto.selectPositionCaret((i-1));
+					texto.selectRange((i-1), texto.getLength());
+					break;
+				}
+			}
+		esconderProcesso();
+		setPodeCarregarAtualizar(true);
+		return igual;
 	}
 	
 	

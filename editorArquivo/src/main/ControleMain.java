@@ -74,6 +74,8 @@ public class ControleMain extends AnchorPane implements Initializable {
 	@FXML
 	private MenuItem comparar;
 	@FXML
+	private MenuItem pesquisar;
+	@FXML
 	private MenuItem limpar;
 	@FXML
 	private MenuItem limparSalvar;
@@ -116,6 +118,9 @@ public class ControleMain extends AnchorPane implements Initializable {
 	private KeyCodeCombination altFechar;
 	private KeyCodeCombination ctrlAtualizar;
 	private KeyCodeCombination ctrlShiftAtualizarTudo;
+	private KeyCodeCombination ctrlShiftCompararArquivos;
+	private KeyCodeCombination ctrlDividirTela;
+	private KeyCodeCombination ctrlPesquisar;
 	private KeyCodeCombination ctrlLimpar;
 	private KeyCodeCombination ctrlShiftLimparSalvar;
 	private KeyCodeCombination ctrlShiftAltAutoAtualizar;
@@ -232,6 +237,17 @@ public class ControleMain extends AnchorPane implements Initializable {
 				}
 			}
 		});
+		
+		pesquisar.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				try {
+					pesquisar();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
 		limpar.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -261,12 +277,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 				try {
 					abilitarPesquisa();
 					if(event.getCode() == KeyCode.ENTER){
-						if(proximo(textoPesquisa.getText())){
-							textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
-						}else{
-							textoPesquisa.setStyle("-fx-text-fill: white;" +
-									"-fx-background-color: linear-gradient(#ff5400, #be1d00);");
-						}
+						pesquisar();
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -396,13 +407,11 @@ public class ControleMain extends AnchorPane implements Initializable {
 		//Setando texto dos Butões próximo e anterior
 		btnAnterior.setText("<");
 		btnProximo.setText(">");
-		//Setando o combobox do tamanho da fonte
-//		ObservableList<String> tamnanhosFonte = FXCollections.observableArrayList(
-//			"10","12","14","16","18","20","24","28","32"
-//		);
-//		fonteCombo.setItems(tamnanhosFonte);
-		
-		
+		//tirando os focus
+		menuArquivo.setFocusTraversable(false);
+		menuAcoes.setFocusTraversable(false);
+		textoPesquisa.setFocusTraversable(false);
+		fonteCombo.setFocusTraversable(false);
 		
 		//Inicializando as teclas de atalho
 		ctrlNovo = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
@@ -412,6 +421,9 @@ public class ControleMain extends AnchorPane implements Initializable {
 		altFechar = new KeyCodeCombination(KeyCode.F, KeyCombination.ALT_DOWN);
 		ctrlAtualizar = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
 		ctrlShiftAtualizarTudo = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN);
+		ctrlDividirTela = new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN);
+		ctrlShiftCompararArquivos = new KeyCodeCombination(KeyCode.C,KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN);
+		ctrlPesquisar = new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN);
 		ctrlLimpar = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN);
 		ctrlShiftLimparSalvar = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN);
 		ctrlShiftAltAutoAtualizar = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN, KeyCombination.ALT_DOWN);
@@ -584,10 +596,18 @@ public class ControleMain extends AnchorPane implements Initializable {
 		if(split.getItems().size() > 1){
 			editorSelecionado = getEditorPorId(getIdTabSelecionado());
 			EditorNaoSelecionado = getEditorPorId(getIdTabTabNaoSelecionado());
-			
+			editorSelecionado.compararArquivos(EditorNaoSelecionado);
 		}
 	}
 	
+	public void pesquisar(){
+		if(proximo(textoPesquisa.getText())){
+			textoPesquisa.setStyle("-fx-text-fill: black;fx-background-color:white;");
+		}else{
+			textoPesquisa.setStyle("-fx-text-fill: white;" +
+					"-fx-background-color: linear-gradient(#ff5400, #be1d00);");
+		}
+	}
 	
 	public void limpar() {
 		int id = getIdTabSelecionado();
@@ -611,11 +631,12 @@ public class ControleMain extends AnchorPane implements Initializable {
 	
 	public boolean proximo(String pesquisa){
 		boolean localizou = false;
-		int id = getIdTabSelecionado();
+		int id= getIdTabSelecionado();
 		if(id > 0){
 			Editor editor = getEditorPorId(id);
 			localizou =  editor.localizarProximo(pesquisa);
 		}
+		
 		return localizou;
 	}
 	
@@ -624,7 +645,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 		int id = getIdTabSelecionado();
 		if(id > 0){
 			Editor editor = getEditorPorId(id);
-			localizou = editor.localizarAnterior(pesquisa);
+			localizou =  editor.localizarAnterior(pesquisa);
 		}
 		return localizou;
 	}
@@ -707,6 +728,10 @@ public class ControleMain extends AnchorPane implements Initializable {
 				AtualizarTodosArquivos();
 			}
 			
+			if(ctrlPesquisar.match(key)){
+				pesquisar();
+			}
+			
 			if(ctrlLimpar.match(key)){
 				limpar();
 			}
@@ -721,6 +746,16 @@ public class ControleMain extends AnchorPane implements Initializable {
 					iniciaTarefaAutoAtualizar();
 				}else{
 					checkAuto.setSelected(false);
+				}
+			}
+			if(!dividir.isDisable()){
+				if(ctrlDividirTela.match(key)){
+					dividirTela();
+				}
+			}
+			if(!comparar.isDisable()){
+				if(ctrlShiftCompararArquivos.match(key)){
+					compararArquivos();
 				}
 			}
 		}
@@ -874,7 +909,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 		if(split.getItems().size() > 1){
 			comparar.setDisable(false);
 			if(tabPane2.getTabs().size() < 1 || tabPane1.getTabs().size() < 1){
-				split.getItems().remove(tabPane2);
+				removerDivisao();
 				dividir.setDisable(true);
 				comparar.setDisable(true);
 			}
@@ -882,6 +917,13 @@ public class ControleMain extends AnchorPane implements Initializable {
 			comparar.setDisable(true);
 		}
 		abilitarPesquisa();
+	}
+	
+	public void removerDivisao(){
+		for (Tab t : tabPane2.getTabs()) {
+			removerEditor(Integer.valueOf(t.getId()));
+		}
+		split.getItems().remove(tabPane2);
 	}
 	
 	public void abilitarPesquisa(){

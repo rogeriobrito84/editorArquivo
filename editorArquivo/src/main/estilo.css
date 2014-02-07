@@ -59,11 +59,11 @@ AnchorPane{
  	-fx-text-background-color: white;
  	-fx-font-size: 30;
  }
-.tab-header-area .tab-header-background{
+.tab-header-area .tab-header-background, .split-pane:horizontal > * > .split-pane-divider{
 	-fx-background-color: linear-gradient(#191d22 100%, #363636 10%, #363636 25%);
     
 }
-.tab-header-area{
+.split-pane .tab-header-area{
 	-fx-pref-height: 20;
 	-fx-padding:  3 0 0 0;
 }

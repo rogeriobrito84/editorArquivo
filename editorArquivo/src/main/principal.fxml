@@ -43,7 +43,9 @@
 						<MenuItem fx:id="dividir" mnemonicParsing="false"
 							text="Dividir Tela --&gt; CTRL + D" />
 						<MenuItem fx:id="comparar" mnemonicParsing="false"
-							text="Comparar Arquivos --&gt; CTRL + P" />
+							text="Comparar Arquivos --&gt; CTRL + Shift + C" />
+						<MenuItem fx:id="pesquisar" mnemonicParsing="false"
+							text="Pesquisar --&gt; CTRL + P" />
 						<MenuItem fx:id="limpar" mnemonicParsing="false"
 							text="Limpar --&gt; CTRL + L" />
 						<MenuItem fx:id="limparSalvar" mnemonicParsing="false"
