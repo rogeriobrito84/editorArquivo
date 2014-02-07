@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane id="panePrinciipal" fx:id="panePrincipal"
@@ -10,8 +9,7 @@
 	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="main.ControleMain">
 	<children>
-		<SplitPane dividerPositions="0.4696969696969697"
-			focusTraversable="true" layoutX="177.0" layoutY="116.0" prefHeight="160.0"
-			prefWidth="200.0" xmlns:fx="http://javafx.com/fxml" />
+		<BorderPane layoutX="109.0" layoutY="115.0" prefHeight="200.0"
+			prefWidth="200.0" />
 	</children>
 </AnchorPane>
