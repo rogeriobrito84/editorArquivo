@@ -885,6 +885,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 			fechar.setDisable(false);
 			atualizar.setDisable(false);
 			atualizarTudo.setDisable(false);
+			pesquisar.setDisable(false);
 			limpar.setDisable(false);
 			textoPesquisa.setDisable(false);
 			checkAuto.setDisable(false);
@@ -894,6 +895,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 			salvarComo.setDisable(true);
 			fechar.setDisable(true);
 			atualizar.setDisable(true);
+			pesquisar.setDisable(true);
 			limpar.setDisable(true);
 			textoPesquisa.setDisable(true);
 			checkAuto.setDisable(true);

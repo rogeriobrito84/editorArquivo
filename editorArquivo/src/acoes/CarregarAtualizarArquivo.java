@@ -18,6 +18,7 @@ public class CarregarAtualizarArquivo implements Runnable {
 	private int quantidadeLinhas;
 	private int tempoSleep;
 	int quantidadeLinhasSleep;
+	int indexCursor = 0;
 	
 	public CarregarAtualizarArquivo(Editor editor, Util util){
 		this.editor = editor;
@@ -38,6 +39,7 @@ public class CarregarAtualizarArquivo implements Runnable {
 					quantidadeLinhasSleep = editor.getQuantidadeLinhasTempo();
 					limiteProcesso = (int) editor.getFile().length();
 					quantidadeLinhas =0;
+					indexCursor = editor.getTexto().getAnchor();
 					br = new BufferedReader(new InputStreamReader(new FileInputStream(editor.getFile()), "UTF-8"));
 					editor.getTexto().clear();
 					while (br.ready()) {
@@ -63,22 +65,27 @@ public class CarregarAtualizarArquivo implements Runnable {
 						}
 					}
 					editor.getTexto().setText(novoArquivo.toString());
-					editor.getTexto().setPrefColumnCount(editor.getQuantidadeLinhasArquivo());
+					int qtdLinhas = editor.getQuantidadeLinhasArquivo();
+					editor.getTexto().setPrefColumnCount(qtdLinhas);
+					if(qtdLinhas > 4000){
+						Thread.sleep(tempoSleep);
+						editor.getTexto().appendText(util.getQuebralinha());
+					}
 					editor.setUltimaModficacao(editor.getFile().lastModified());
 					editor.getProgresso().setProgress(1);
+					editor.getTexto().positionCaret(indexCursor);
+					System.out.println(editor.getTab().getText() + " foi atualizado --------------------------------------");
 				}
 			}
 		} catch (Exception e) {
-//			System.out.println("Estourou no Carregar!");
-//			e.printStackTrace();
+			System.out.println("Erro na class CarregarAtualizarArquivo linha: " + 72);
 			editor.esconderProcesso();
 		} finally {
 			if(br != null){
 				try {
 					br.close();
 				} catch (IOException e) {
-//					System.out.println("Estourou no Carregar!");
-//					e.printStackTrace();
+					System.out.println("Erro ao fechar buffereWrite na class CarregarAtualizarArquivo linha: " + 79);
 				}
 			}
 			editor.esconderProcesso();

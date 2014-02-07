@@ -41,6 +41,7 @@ public class AutoAtualizar implements Runnable {
 						if(editor.isPodeCarregarAtualizar()){
 							CarregarAtualizarArquivo atualizar = new CarregarAtualizarArquivo(editor, util);
 							new Thread(atualizar).start();
+							System.out.println("Thread para: " + editor.getTab().getText());
 						}
 					}
 				}
@@ -50,7 +51,9 @@ public class AutoAtualizar implements Runnable {
 					tabPane = tabPane1;
 				}
 				Thread.sleep(tempoParaAtualizacao); 
-			}catch(Exception e){}
+			}catch(Exception e){
+				System.out.println("Erro na class AutoAtualizar linha: " + 54);
+			}
 		}
 
 	}

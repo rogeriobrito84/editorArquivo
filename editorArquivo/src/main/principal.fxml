@@ -93,7 +93,7 @@
 		<SplitPane fx:id="split" dividerPositions="0.5"
 			focusTraversable="true" layoutY="25.0" prefHeight="375.0" prefWidth="600.0"
 			xmlns:fx="http://javafx.com/fxml">
-			
+
 		</SplitPane>
 	</children>
 </ControleMain>

@@ -106,9 +106,11 @@ public class Editor {
 			tempo = Math.round(linhas / 30);
 		}else if(linhas > 500 && linhas <= 1000){
 			tempo = Math.round(linhas / 50);
-		}else if(linhas > 1000 && linhas <= 4000){
+		}else if(linhas > 1000 && linhas <= 5000){
 			tempo = Math.round(linhas / 200);
-		}else if(linhas > 4000 && linhas <= 10000){
+		}else if(linhas > 5000 && linhas <= 80000){
+			tempo = Math.round(linhas / 250);
+		}else if(linhas > 8000 && linhas <= 10000){
 			tempo = Math.round(linhas / 300);
 		}else if(linhas > 10000 && linhas <= 20000){
 			tempo = Math.round(linhas / 9000);

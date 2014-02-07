@@ -28,9 +28,7 @@ public class Main extends Application{
 				cena.getStylesheets().add("main/estilo.css");
 				ControleMain.heightXProperty().bind(cena.heightProperty().subtract(0));
 				ControleMain.widthXProperty().bind(cena.widthProperty().subtract(0)); 
-				
 				palco.setScene(cena);
-			
 				palco.show();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

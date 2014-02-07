@@ -1,81 +1,79 @@
-Pane{
+Pane {
 	-fx-background-color: black;
 	-fx-opacity: 0.7;
 }
 
 #botaoMenu {
-   -fx-background-color:
-        #000000,
-        linear-gradient(#7ebcea, #2f4f8f),
-        linear-gradient(#395cab, #223768);
-    -fx-font-size: 12;
+	-fx-background-color: #000000, linear-gradient(#7ebcea, #2f4f8f),
+		linear-gradient(#395cab, #223768);
+	-fx-font-size: 12;
 }
 
-
-#textoPesquisa{
-	 -fx-background-radius: 30;
-	 -fx-padding: 5 10 5 10;
+#textoPesquisa {
+	-fx-background-radius: 30;
+	-fx-padding: 5 10 5 10;
 }
 
-AnchorPane{
+AnchorPane {
 	-fx-font-size: 10;
 }
 
-.tab-pane, #menu {
-	-fx-background-color:
-        linear-gradient(#363636 25%, #363636 25%, #191d22 100%);
-    -fx-font-family: "Arial";
-    -fx-font-size: 12;
-    -fx-text-fill: white;
+.tab-pane,#menu {
+	-fx-background-color: linear-gradient(#363636 25%, #363636 25%, #191d22 100%);
+	-fx-font-family: "Arial";
+	-fx-font-size: 12;
+	-fx-text-fill: white;
 }
 
-#textoFonte{
+#textoFonte {
 	-fx-text-fill: white;
 	-fx-font-size: 12;
 }
 
-.check-box{
-	-fx-text-fill: white;
-}
-.button{
+.check-box {
 	-fx-text-fill: white;
 }
 
-.combo-box .list-cell{
+.button {
 	-fx-text-fill: white;
 }
-.combo-box .arrow-button{
+
+.combo-box .list-cell {
+	-fx-text-fill: white;
+}
+
+.combo-box .arrow-button {
 	-fx-background-color: white;
 }
 
 .menu-button .label {
- 	-fx-text-fill: white;
- }
- .check-box .box{
+	-fx-text-fill: white;
+}
+.check-box .box {
 	-fx-background-color: white;
- }
- .progress-indicator{
- 	-fx-progress-color: #2f4f8f;
- 	-fx-text-background-color: white;
- 	-fx-font-size: 30;
- }
-.tab-header-area .tab-header-background, .split-pane:horizontal > * > .split-pane-divider{
+}
+
+.progress-indicator {
+	-fx-progress-color: #2f4f8f;
+	-fx-text-background-color: white;
+	-fx-font-size: 30;
+}
+
+.tab-header-area .tab-header-background,.split-pane:horizontal>*>.split-pane-divider
+	{
 	-fx-background-color: linear-gradient(#191d22 100%, #363636 10%, #363636 25%);
-    
 }
-.split-pane .tab-header-area{
+
+.split-pane .tab-header-area {
 	-fx-pref-height: 20;
-	-fx-padding:  3 0 0 0;
+	-fx-padding: 3 0 0 0;
 }
-.tab{
+
+.tab {
 	-fx-font-size: 12;
-	-fx-padding:  0 5 0 5;
-}
-.split-pane{
-	-fx-padding:  0 0 0 0;
-	
+	-fx-padding: 0 5 0 5;
 }
 
-
-
-
+.split-pane {
+	-fx-padding: 0 0 0 0;
+}

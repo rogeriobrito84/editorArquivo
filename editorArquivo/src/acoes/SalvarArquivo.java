@@ -65,16 +65,17 @@ public class SalvarArquivo implements Runnable {
 				}
 				editor.getProgresso().setProgress(1);
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			System.out.println("Erro na class SalvarArquivo linha: " + 69);
 			e.printStackTrace();
 		} finally {
 			try{
 				if(bw != null){
 					bw.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				System.out.println("Erro ao fechar BufferedWrite na class SalvarArquivo linha: " + 77);
+			}
 			editor.esconderProcesso();
 			editor.setUltimaModficacao(editor.getFile().lastModified());
 			editor.setPodeCarregarAtualizar(true);
