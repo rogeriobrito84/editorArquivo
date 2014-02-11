@@ -100,7 +100,7 @@ public class ControleMain extends AnchorPane implements Initializable {
 	
 	// Atributos da classe
 
-	private long tempoParaAtualizacao = 500;
+	private long tempoParaAtualizacao = 1000;
 	private List<Editor> editores;
 	private Util util;
 	private int contTabs;

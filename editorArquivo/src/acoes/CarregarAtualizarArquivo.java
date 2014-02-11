@@ -67,10 +67,10 @@ public class CarregarAtualizarArquivo implements Runnable {
 					editor.getTexto().setText(novoArquivo.toString());
 					int qtdLinhas = editor.getQuantidadeLinhasArquivo();
 					editor.getTexto().setPrefColumnCount(qtdLinhas);
-					if(qtdLinhas > 4000){
-						Thread.sleep(tempoSleep);
-						editor.getTexto().appendText(util.getQuebralinha());
-					}
+//					if(qtdLinhas > 4000){
+//						Thread.sleep(tempoSleep);
+//						editor.getTexto().appendText(util.getQuebralinha());
+//					}
 					editor.setUltimaModficacao(editor.getFile().lastModified());
 					editor.getProgresso().setProgress(1);
 					editor.getTexto().positionCaret(indexCursor);

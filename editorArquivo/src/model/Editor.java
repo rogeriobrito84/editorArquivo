@@ -132,9 +132,9 @@ public class Editor {
 		if(linhas >= 10 && linhas < 4000){
 			tempo =  Math.round(linhas / 10);
 		}else if(linhas > 4000 && linhas <= 1000){
-			tempo =  Math.round(linhas / 100);
+			tempo =  Math.round(linhas / 20);
 		}else if(linhas > 10000){
-			tempo = Math.round(linhas / 100);
+			tempo = Math.round(linhas / 20);
 		}else{
 			tempo = linhas;
 		}
@@ -220,6 +220,8 @@ public class Editor {
 		setPodeCarregarAtualizar(true);
 		return igual;
 	}
+	
+	
 	
 	
 	public void mostrarProcesso(){
